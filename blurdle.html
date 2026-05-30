@@ -1,0 +1,488 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;600;800&display=swap');
+  
+  :root { /* global scope */
+    --game-bg-color: #b7b7b7; 
+    --letter-box-color: #777777;
+  }
+    
+  .gameBoxBg {
+    box-sizing: border-box;
+    background: #933b3b;
+    width: 150px;
+    height: 200px;
+    position: center;
+    box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
+  }
+  .line-two,
+  .line-two * {
+    box-sizing: border-box;
+  }
+  .line-two {
+    width: 147px;
+    height: 26px;
+    position: relative;
+  }
+  .welcome-to-blurrdle,
+  .welcome-to-blurrdle * {
+    box-sizing: border-box;
+  }
+  .welcome-to-blurrdle {
+    color: #000000;
+    text-align: center;
+    font-family: "Inter-SemiBold", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    position: relative;
+    width: 216px;
+    height: 48px;
+  }
+
+  .blurdle-wrap {
+    font-family: 'DM Sans', sans-serif;
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--game-bg-color);
+  }
+
+  .blurdle-header {
+    text-align: center;
+  }
+
+  .blurdle-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--color-text-primary);
+    margin: 0 0 4px;
+  }
+
+  .blurdle-subtitle {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .blurdle-board {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    gap: 6px;
+  }
+
+  .blurdle-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  .blurdle-tile {
+    width: 58px;
+    height: 58px;
+    border: 2px solid var(--color-border-secondary);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    transition: border-color 0.1s;
+    position: relative;
+    overflow: hidden;
+    background: var(--letter-box-color);
+  }
+
+  .blurdle-tile.filled {
+    border-color: var(--color-border-primary);
+    animation: pop 0.1s ease;
+  }
+
+  .blurdle-tile.correct {
+    background: #538D4E;
+    color: #fff;
+    border-color: #538D4E;
+  }
+
+  .blurdle-tile.present {
+    background: #B59F3B;
+    color: #fff;
+    border-color: #B59F3B;
+  }
+
+  .blurdle-tile.absent {
+    background: var(--letter-box-color);
+    color: var(--color-text-secondary);
+    border-color: transparent;
+  }
+
+  .blurdle-tile.reveal {
+    animation: flip 0.5s ease forwards;
+  }
+
+  .blurdle-tile.shake {
+    animation: shake 0.4s ease;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes flip {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(-90deg); }
+    100% { transform: rotateX(0deg); }
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-6px); }
+    40%,80% { transform: translateX(6px); }
+  }
+
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    40% { transform: translateY(-12px); }
+    60% { transform: translateY(-6px); }
+  }
+
+  .blurdle-tile.bounce { animation: bounce 0.6s ease; }
+
+  .keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .keyboard-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .key {
+    height: 58px;
+    min-width: 43px;
+    padding: 0 8px;
+    border: none;
+    border-radius: 6px;
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    transition: background 0.15s, color 0.15s;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .key.wide { min-width: 66px; font-size: 12px; }
+  .key:hover { background: var(--color-border-tertiary); }
+  .key.correct { background: #538D4E; color: #fff; border-color: #538D4E; }
+  .key.present { background: #B59F3B; color: #fff; border-color: #B59F3B; }
+  .key.absent { background: var(--color-border-primary); color: var(--color-text-tertiary); border-color: transparent; }
+
+  .message-bar {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    letter-spacing: 0.02em;
+  }
+
+  .new-game-btn {
+    padding: 10px 28px;
+    border-radius: 6px;
+    border: none;
+    background: var(--color-text-primary);
+    color: var(--color-background-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity 0.15s;
+  }
+  .new-game-btn:hover { opacity: 0.8; }
+</style>
+<body>
+<div class="blurdle-wrap" id="app">
+  <div class="blurdle-header">
+    <p class="blurdle-title">BLURDLE</p>
+    <p class="blurdle-subtitle">Guess the word in 6 tries, but no hints</p>
+  </div>
+  <div class="message-bar" id="msg"></div>
+  <div class="blurdle-board" id="board"></div>
+  <div class="keyboard" id="keyboard"></div>
+</div>
+
+<script>
+const WORDS = ['STUFF', 'COUCH', 'VISIT', 'NIECE', 'CHUCK', 'VOCAL', 'AGREE', 'WRECK', 'DUSTY', 'LOATH', 'BYLAW', 'MOVER', 'CREED', 'WAVER', 'DOWDY', 'CLOCK', 'NEWLY', 'PARKA', 'SATIN', 'UMBRA', 'BUDGE', 'LIKEN', 'LATCH', 'RISER', 'PUFFY', 'BRING', 'PLUME', 'CROCK', 'RURAL', 'QUACK', 'EERIE', 'GLOSS', 'WOMEN', 'DRUNK', 'TWEET', 'SNORE', 'CLUMP', 'WEAVE', 'STAND', 'TOADY', 'BELLE', 'CUBIT', 'BEGUN', 'CYCLE', 'ELFIN', 'ALLEY', 'PRUDE', 'CAROM', 'LADEN', 'INLET', 'DENSE', 'SWORN', 'ENVOY', 'SANDY', 'SINGE', 'SOBER', 'FIZZY', 'SWAMP', 'COMET', 'CHUMP', 'AFOOT', 'IVORY', 'BEFIT', 'WISER', 'BROOD', 'SERIF', 'BASIL', 'SLICK', 'OASIS', 'REHAB', 'AMPLY', 'CLASP', 'DRAMA', 'GRADE', 'ANKLE', 'EATEN', 'SMELL', 'TEDDY', 'SHOAL', 'HASTY', 'LOBBY', 'VOGUE', 'GUNKY', 'SHEEP', 'THEFT', 'LINEN', 'SLIME', 'FLUKE', 'HYDRA', 'DIZZY', 'LANCE', 'SHRED', 'BUYER', 'ATTIC', 'GUAVA', 'AWAKE', 'STANK', 'HOIST', 'MOGUL', 'SQUAD', 'ROOST', 'SKULL', 'BLOOM', 'MOOCH', 'SURGE', 'VEGAN', 'SCENE', 'CELLO', 'EMBED', 'BLEAT', 'GAVEL', 'SWOOP', 'CHIDE', 'WEIGH', 'CIGAR', 'SPINY', 'ALLOT', 'JUMBO', 'FLAKY', 'CRUEL', 'DUSKY', 'FREAK', 'STRUT', 'CLIFF', 'BARON', 'CLINK', 'CUBIC', 'SULLY', 'WAXEN', 'SUMAC', 'FIERY', 'RACER', 'CHASM', 'AVOID', 'GUMBO', 'TRIAL', 'QUARK', 'MANIC', 'EIGHT', 'BLAST', 'PECAN', 'OOMPH', 'FILLY', 'POSSE', 'SITAR', 'PROOF', 'FABLE', 'SIREN', 'DECOR', 'FRUIT', 'ABBOT', 'BATCH', 'SPEED', 'PRISM', 'SPOOL', 'GLINT', 'CONCH', 'QUILT', 'WHITE', 'MYRRH', 'RUGBY', 'GRASS', 'SEGUE', 'DODGY', 'SWING', 'MISER', 'TRUCK', 'GUESS', 'ERASE', 'SNIDE', 'GRAVY', 'FLUTE', 'WAIST', 'AMONG', 'TULIP', 'HASTE', 'CACTI', 'LEACH', 'MUGGY', 'GRUFF', 'COLIC', 'REMIT', 'HOVEL', 'PLEAD', 'DOUGH', 'BUNNY', 'THICK', 'VOWEL', 'GRAVE', 'MAKER', 'OPINE', 'CLAMP', 'WIELD', 'CLUNG', 'LURID', 'TINGE', 'DEUCE', 'GIZMO', 'TABBY', 'FUGUE', 'ARISE', 'PERIL', 'GUISE', 'SHORT', 'VENUE', 'AWOKE', 'RABID', 'MOTEL', 'ABHOR', 'LATHE', 'GLARE', 'HOLLY', 'FETID', 'PLUMP', 'GAUGE', 'TUBER', 'DRILL', 'STUNT', 'DETOX', 'LIMBO', 'IDEAL', 'HAVEN', 'GROSS', 'CATTY', 'SPOOF', 'FORUM', 'BEARD', 'WOUND', 'STACK', 'LEVER', 'HARDY', 'ANNOY', 'NYLON', 'AMUSE', 'PLANE', 'RELAY', 'SPASM', 'WIDTH', 'SPOIL', 'GEESE', 'CIVIL', 'GOOEY', 'FRITZ', 'DALLY', 'DRAPE', 'BLUNT', 'MOUTH', 'QUILL', 'COVEN', 'DEFER', 'LATER', 'KNIFE', 'TEETH', 'LEFTY', 'ALONG', 'NOISY', 'NADIR', 'THROB', 'CHAIR', 'POUTY', 'TRICK', 'CHIRP', 'TENOR', 'BULGE', 'DRIFT', 'BLEND', 'FETCH', 'MIGHT', 'LEAST', 'PETAL', 'ELATE', 'GRAFT', 'SPLIT', 'TOWER', 'ANNEX', 'MIRTH', 'SPORE', 'UNION', 'RATTY', 'EXTOL', 'LLAMA', 'ROWDY', 'ISSUE', 'LOUSY', 'MATTE', 'LEVEL', 'KNELL', 'KEFIR', 'NOMAD', 'SOUTH', 'MINTY', 'NASAL', 'IMBUE', 'CORAL', 'GROAN', 'STORK', 'RIGID', 'LUMPY', 'DAUNT', 'BANJO', 'FRILL', 'ASSAY', 'OMEGA', 'SAVVY', 'WHOLE', 'HAUNT', 'GOFER', 'QUAKE', 'WATER', 'BURNT', 'TIZZY', 'BLANK', 'SWORD', 'LORIS', 'MODAL', 'NERVY', 'FOIST', 'UNDID', 'GNOME', 'EXILE', 'BRAND', 'JUMPY', 'NOVEL', 'DREAD', 'STILT', 'ATRIA', 'BALER', 'CURVE', 'POPPY', 'INCUR', 'MOLDY', 'BLINK', 'WITTY', 'STUMP', 'PLAIN', 'OFFER', 'COMFY', 'ELITE', 'ODDLY', 'THRUM', 'GLADE', 'TAUPE', 'CURIO', 'MUNCH', 'PRANK', 'PETTY', 'QUAIL', 'GHOST', 'BILGE', 'VIXEN', 'PLAID', 'TAFFY', 'BOARD', 'LEASE', 'REUSE', 'EDIFY', 'DATUM', 'CEASE', 'ADMIN', 'PREEN', 'ROUGH', 'HABIT', 'IDIOM', 'QUASH', 'POLAR', 'SPORT', 'DRONE', 'GRIFT', 'SUEDE', 'SHUCK', 'FOLIO', 'ALARM', 'BORNE', 'PITCH', 'LIVID', 'GROWN', 'FIFTH', 'EAGER', 'BONGO', 'AWARE', 'BICEP', 'DOWEL', 'YEAST', 'TRIPE', 'BALMY', 'MACHO', 'SUITE', 'SHUSH', 'TROUT', 'PATSY', 'WHOSE', 'ADEPT', 'IDLER', 'BLISS', 'DUMMY', 'WEEDY', 'CLASH', 'KNOWN', 'GENIE', 'OZONE', 'ARTSY', 'SPATE', 'PATCH', 'INBOX', 'DIRGE', 'STOOD', 'MORAL', 'ASHEN', 'CREST', 'LAUGH', 'NURSE', 'ARROW', 'TURBO', 'WHEAT', 'SPARE', 'HAZEL', 'VILLA', 'FOAMY', 'KRILL', 'SHEAR', 'CURSE', 'JEWEL', 'BOOTY', 'QUOTA', 'SORRY', 'VERSE', 'SHEET', 'ELBOW', 'SHELF', 'ANGLE', 'DOPEY', 'AMBLE', 'NUDGE', 'BASTE', 'SPARK', 'TIMER', 'LASSO', 'STAMP', 'LADLE', 'PIECE', 'CHASE', 'MANGO', 'TRACK', 'SPITE', 'GREED', 'NAVEL', 'TROOP', 'ALERT', 'SCRUM', 'CHECK', 'SPEAR', 'DEITY', 'HOVER', 'FUZZY', 'LODGE', 'AWARD', 'DRYER', 'GLAND', 'OTTER', 'CREAM', 'CLOVE', 'ROACH', 'MADLY', 'INDIE', 'TRAIL', 'SUAVE', 'CROOK', 'DITTY', 'RUMBA', 'RAPID', 'SCORE', 'GOODY', 'BONUS', 'STEEP', 'SWATH', 'PUPIL', 'PEDAL', 'TOOTH', 'REVUE', 'CHORE', 'RIVET', 'TOAST', 'FALSE', 'UDDER', 'FEVER', 'SHUNT', 'SUNNY', 'CRISP', 'CREPE', 'UPPER', 'REACH', 'ICING', 'SQUID', 'ROWER', 'SILLY', 'PROSE', 'FLINT', 'KNACK', 'FANCY', 'CLOAK', 'TOTAL', 'DINGY', 'CRAWL', 'WAFER', 'DRAFT', 'ATLAS', 'SPRIG', 'CYBER', 'RELAX', 'CHEAP', 'CHOSE', 'NERVE', 'LEMUR', 'STARE', 'MAMBO', 'DECRY', 'GRAIN', 'AFFIX', 'SHARE', 'EAGLE', 'SAUNA', 'BRAWN', 'BLADE', 'FLASH', 'STRAY', 'HEFTY', 'SCOWL', 'BOAST', 'FUNKY', 'DROOL', 'BOXER', 'VYING', 'PLUMB', 'PATIO', 'FLUNG', 'HYENA', 'HILLY', 'SHOVE', 'ENDOW', 'CRYPT', 'SHAKY', 'GUILE', 'MAUVE', 'DOGMA', 'HIPPO', 'CHOCK', 'SLANG', 'WITCH', 'BROWN', 'TWIST', 'JELLY', 'PEARL', 'SPINE', 'NICHE', 'GOING', 'FRAIL', 'TALLY', 'VISOR', 'TACKY', 'UVULA', 'PRIMP', 'FLOWN', 'STOIC', 'INNER', 'SWELL', 'READY', 'EVENT', 'TRULY', 'OCTET', 'VINYL', 'BLAZE', 'SNOOP', 'SIXTH', 'WEIRD', 'EASEL', 'TUNIC', 'BAWDY', 'SANDY', 'WREAK', 'FROWN', 'BOSSY', 'GOOFY', 'SHOUT', 'SPOON', 'DICEY', 'FIBER', 'STINT', 'HALVE', 'GRANT', 'CORER', 'GAMUT', 'PRONE', 'STAIN', 'GUSTY', 'CARVE', 'MOMMY', 'JOINT', 'FLOUR', 'LAGER', 'MINER', 'TITLE', 'WAGON', 'SHELL', 'MODEM', 'CLOUD', 'RIDER', 'BRAIN', 'FAITH', 'THANK', 'TORCH', 'HANDY', 'STEAM', 'TEACH', 'SEVEN', 'SMOKE', 'PRESS', 'FULLY', 'BEAUT', 'HONEY', 'RECUR', 'BROAD', 'HARSH', 'BRASS', 'AISLE', 'REBEL', 'DEBIT', 'DRAWN', 'OWNER', 'RERUN', 'WIDEN', 'STERN', 'FAINT', 'CAMEL', 'MUSHY', 'SPOUT', 'KNAVE', 'FLUNK', 'LITHE', 'CROWN', 'STAKE', 'SKATE', 'FILET', 'LEECH', 'BRUTE', 'MULCH', 'DELAY', 'METER', 'LANKY', 'STORM', 'BRACE', 'ACORN', 'SHORE', 'NEIGH', 'SKIFF', 'SCONE', 'MEDIC', 'OUNCE', 'SAUCY', 'MACAW', 'ANVIL', 'ENSUE', 'LOWER', 'SCALE', 'FLAKE', 'CHALK', 'PENNE', 'FERAL', 'SUPER', 'SMOCK', 'JUICE', 'AWASH', 'PORCH', 'FORTE', 'PRONG', 'CADET', 'SPECK', 'SHAFT', 'REFER', 'NERDY', 'QUITE', 'DECOY', 'SWOON', 'VIDEO', 'ENACT', 'JIFFY', 'CAMEO', 'GAUNT', 'BLARE', 'SHAPE', 'CANON', 'SCOFF', 'CRUSH', 'DEBUT', 'THIGH', 'INLAY', 'ADAGE', 'BUDDY', 'ZEBRA', 'DROVE', 'ORDER', 'KNEAD', 'SAVOR', 'DOLLY', 'BUGLE', 'EDICT', 'PAINT', 'SCENT', 'TERSE', 'COVER', 'PRIOR', 'GRIND', 'PROUD', 'VAULT', 'ANGST', 'DETER', 'SWUNG', 'MANGA', 'CROWD', 'HENCE', 'MELON', 'ETHER', 'ORGAN', 'GROOM', 'STARK', 'BRAVO', 'BASIN', 'CHAOS', 'GUMMY', 'PAPAL', 'MINUS', 'SKIER', 'BEVEL', 'TITAN', 'GLIDE', 'SWISH', 'EXALT', 'DINGO', 'NICER', 'HITCH', 'BRINY', 'TUTOR', 'STALL', 'PINCH', 'AMASS', 'CUMIN', 'OUTER', 'TIDAL', 'MEDIA', 'JERKY', 'PIOUS', 'MUSTY', 'SHAVE', 'DECAL', 'VALUE', 'EBONY', 'SLICE', 'DIARY', 'PROWL', 'CRAFT', 'PRUNE', 'GLEAM', 'VAPID', 'INTRO', 'OVERT', 'ROVER', 'LASER', 'JOLLY', 'LUCID', 'RAISE', 'FACET', 'TITHE', 'SHANK', 'EQUIP', 'BLIMP', 'STEEL', 'WHINY', 'LOUSE', 'BROTH', 'MERGE', 'BREED', 'VOILA', 'FINCH', 'WRIST', 'CLIMB', 'PLAIT', 'SERUM', 'FROND', 'TABOO', 'FORCE', 'REALM', 'SPEAK', 'STUNG', 'MAYOR', 'SALLY', 'TOWEL', 'RISEN', 'DECAY', 'SHADE', 'LINGO', 'ABIDE', 'SPELT', 'SNORT', 'TOXIN', 'ERUPT', 'SINCE', 'LOCAL', 'HEAVE', 'PESKY', 'GRASP', 'CHEER', 'EARLY', 'CLONE', 'TEARY', 'HUNCH', 'FLAME', 'STATE', 'URBAN', 'FORTY', 'IMAGE', 'DEVIL', 'SENSE', 'OFTEN', 'SMITH', 'PIPER', 'APART', 'HEAVY', 'BUILD', 'MATCH', 'PRICE', 'RIDGE', 'PSALM', 'STASH', 'ASCOT', 'TALON', 'SCRAM', 'PASTA', 'NEVER', 'FRIED', 'STIFF', 'PLACE', 'AFTER', 'WHICH', 'REPEL', 'VERGE', 'MICRO', 'CLEFT', 'ALIVE', 'BULKY', 'EXPEL', 'LEGGY', 'EMBER', 'SNAKE', 'ALOOF', 'BLOCK', 'RELIC', 'STILL', 'TWEAK', 'NORTH', 'LARGE', 'THING', 'STOLE', 'COURT', 'BLOND', 'LUNCH', 'DOING', 'HEARD', 'ROUTE', 'BRIEF', 'THREW', 'LINER', 'FINAL', 'STONY', 'CABLE', 'LUNGE', 'SCANT', 'TWIRL', 'AGING', 'MURAL', 'SALTY', 'THREE', 'CHILD', 'LEARN', 'DAISY', 'PHONE', 'EVOKE', 'GRACE', 'SLOPE', 'TOUCH', 'BUILT', 'SMALL', 'TABLE', 'FUNNY', 'BACON', 'GLOBE', 'TOPIC', 'WOULD', 'SPENT', 'THESE', 'HOUSE', 'CHAIN', 'SHIFT', 'SHARP', 'SLEEP', 'WOMAN', 'YOUNG', 'WORST', 'ADAPT', 'GENRE', 'TAKEN', 'RESIN', 'SUSHI', 'SCOPE', 'TAWNY', 'SOLID', 'GUIDE', 'THROW', 'QUEEN', 'PIXEL', 'PIANO', 'CANDY', 'QUEUE', 'THINK', 'TARDY', 'TRUST', 'SIGHT', 'SASSY', 'GREEN', 'MEANT', 'ACTOR', 'LEASH', 'GLAZE', 'NINJA', 'LIMIT', 'TRADE', 'FLARE', 'MANIA', 'ARDOR', 'UNTIL', 'NOISE', 'BLEAK', 'GRAIL', 'PHONY', 'MASON', 'NOBLE', 'PIQUE', 'RETRY', 'CAUSE', 'TEMPO', 'GIVEN', 'SMIRK', 'OCCUR', 'SPLAT', 'MERCY', 'ADULT', 'GRAPH', 'LEAKY', 'AGENT', 'UNCLE', 'KNELT', 'SKUNK', 'SNAIL', 'TRUTH', 'BINGE', 'VIOLA', 'CHIME', 'BUNCH', 'SPURT', 'WHILE', 'MERRY', 'BERET', 'DADDY', 'AZURE', 'COACH', 'SMILE', 'LOYAL', 'ROCKY', 'RIGHT', 'CAROL', 'BRUSH', 'STONE', 'SNARE', 'CLOSE', 'FRANK', 'MUSIC', 'ANGEL', 'EXERT', 'RAYON', 'CLEAR', 'WHISK', 'OLDER', 'QUOTE', 'LUCKY', 'ROUSE', 'DWELL', 'GNASH', 'BIRCH', 'GIDDY', 'AWAIT', 'ONION', 'SPACE', 'BRIDE', 'AUDIO', 'CAPER', 'WRITE', 'PEACE', 'CHOIR', 'OCEAN', 'WORDY', 'VERVE', 'SPICE', 'BEACH', 'QUEST', 'MAGMA', 'EXACT', 'AMISS', 'SCRUB', 'INDEX', 'SNAKY', 'WRATH', 'QUICK', 'HELLO', 'EMPTY', 'LOVER', 'BULLY', 'BROOK', 'POLYP', 'ANODE', 'CHART', 'PARTY', 'BEGET', 'TENTH', 'STYLE', 'BATHE', 'CURLY', 'ETHOS', 'DISCO', 'HEART', 'WHEEL', 'HOBBY', 'WHALE', 'FROZE', 'BURLY', 'FLANK', 'TONIC', 'FLYER', 'DROOP', 'TOPAZ', 'CRONE', 'FIEND', 'BARGE', 'WHIRL', 'EARTH', 'FOLLY', 'ENTER', 'COWER', 'DONUT', 'WINDY', 'VENOM', 'IRATE', 'HOTEL', 'MOSSY', 'BLEEP', 'STRAW', 'DINER', 'TRACT', 'ABOUT', 'GUEST', 'RODEO', 'GRAND', 'COVET', 'TASTE', 'CRANE', 'FROST', 'KAZOO', 'SHYLY', 'RANCH', 'STRAP', 'MAYBE', 'CRIME', 'PLUNK', 'WRONG', 'GUARD', 'AGAIN', 'BALSA', 'CRUMB', 'HATER', 'SCOUT', 'ENNUI', 'BEAST', 'NANNY', 'HUMID', 'JAZZY', 'AGILE', 'KNEEL', 'MOUSE', 'SKIMP', 'RAMEN', 'SWINE', 'BAGEL', 'UTTER', 'CLERK', 'IGLOO', 'BRASH', 'FLASK', 'GRIEF', 'SHORN', 'PLANK', 'LATTE', 'CANOE', 'SCARF', 'ACRID', 'SNACK', 'BROOM', 'ETHIC', 'COCOA', 'AGLOW', 'GHOUL', 'ANGER', 'BELOW', 'GUPPY', 'HORDE', 'SULKY', 'RANGE', 'PLAZA', 'CEDAR', 'CIRCA', 'LOGIC', 'METRO', 'JOKER', 'DITTO', 'UNZIP', 'BROKE', 'KAYAK', 'PLATE', 'THUMP', 'HOUND', 'WHIFF', 'DWELT', 'AGONY', 'THIEF', 'CARAT', 'BORAX', 'QUALM', 'UNDER', 'SNAFU', 'LEDGE', 'LOCUS', 'LEAFY', 'SMASH', 'RATIO', 'FLORA', 'STOCK', 'MARCH', 'EVERY', 'BREAD', 'BESET', 'HURRY', 'GUANO', 'UNTIE', 'VOTER', 'GROUT', 'STAID', 'DUVET', 'TOUGH', 'GLOVE', 'CREDO', 'YACHT', 'MEALY', 'CIDER', 'SWEEP', 'SURLY', 'BLAME', 'BIRTH', 'EMAIL', 'REVEL', 'WHERE', 'REGAL', 'HORSE', 'PINKY', 'TOXIC', 'TREND', 'SQUAT', 'ABOVE', 'MOOSE', 'POLKA', 'WORSE', 'SYRUP', 'FIFTY', 'ARBOR', 'VAGUE', 'RIPER', 'RUDDY', 'SWEAT', 'KIOSK', 'AVAIL', 'CACHE', 'MAGIC', 'SALSA', 'SOUND', 'USAGE', 'GIANT', 'DEBUG', 'HEADY', 'STAGE', 'FLAIL', 'APPLE', 'NINTH', 'DANCE', 'UNLIT', 'TASTY', 'SHIRK', 'SCOLD', 'CROSS', 'CRAVE', 'FISHY', 'FLIRT', 'WORRY', 'BEEFY', 'MAIZE', 'COUNT', 'ELUDE', 'MATEY', 'BLURB', 'ALTER', 'MUCKY', 'CHARD', 'ADOPT', 'FROCK', 'SPIRE', 'KOALA', 'HUMAN', 'LEAPT', 'SEDAN', 'GRIMY', 'PIXIE', 'OPERA', 'LEMON', 'BELIE', 'SLEEK', 'LAYER', 'ANTIC', 'SKIRT', 'WHINE', 'MANLY', 'MOLAR', 'HAVOC', 'IMPEL', 'CONDO', 'JUDGE', 'EXTRA', 'POISE', 'AORTA', 'EXCEL', 'LUNAR', 'THIRD', 'SLATE', 'TAPER', 'CHORD', 'PROBE', 'RIVAL', 'USUAL', 'SPOKE', 'APPLY', 'NAIVE', 'KNOCK', 'BRAID', 'INFER', 'JOUST', 'AMBER', 'WOKEN', 'ADORE', 'TORSO', 'CHAFE', 'EJECT', 'STUDY', 'UNDUE', 'TEPID', 'HAPPY', 'CLEAN', 'ITCHY', 'FEAST', 'DRIVE', 'PRIME', 'AXIOM', 'BRAVE', 'AVERT', 'GLYPH', 'THERE', 'BAKER', 'SNARL', 'MAPLE', 'INANE', 'VALET', 'MEDAL', 'UNITE', 'RAINY', 'SPELL', 'BEGIN', 'STALE', 'DREAM', 'PHOTO', 'ALOUD', 'INEPT', 'PINEY', 'APTLY', 'WALTZ', 'LIBEL', 'SNEAK', 'CARRY', 'FLOUT', 'FOGGY', 'FAULT', 'MUMMY', 'SPIEL', 'GROVE', 'DENIM', 'QUIRK', 'EXIST', 'STEIN', 'SPADE', 'CATCH', 'FLOOR', 'EQUAL', 'IONIC', 'VALID', 'ENJOY', 'HOWDY', 'VIGOR', 'DANDY', 'SLOTH', 'MARSH', 'BOUGH', 'STING', 'TWINE', 'LEAVE', 'SCORN', 'SCALD', 'USURP', 'SOGGY', 'BRISK', 'ADMIT', 'GRATE', 'GLORY', 'SAINT', 'RECAP', 'ALIKE', 'TRICE', 'STICK', 'CHUTE', 'PARER', 'DOUBT', 'THYME', 'ALPHA', 'BOOZE', 'TIBIA', 'LOFTY', 'THEME', 'CLASS', 'LEERY', 'TAUNT', 'WHOOP', 'INTER', 'GULLY', 'CHARM', 'FUNGI', 'PRIZE', 'ONSET', 'CHIEF', 'GAUZE', 'RUDER', 'IRONY', 'CLOWN', 'NEEDY', 'WOVEN', 'MERIT', 'WASTE', 'TREAT', 'SHRUG', 'TWANG', 'TWICE', 'GRUEL', 'POKER', 'KHAKI', 'HUNKY', 'LABEL', 'GLEAN', 'CLING', 'PATTY', 'UNFIT', 'SMEAR', 'ALIEN', 'BUGGY', 'RHYME', 'YOUTH', 'COYLY', 'QUART', 'CRAMP', 'BLUFF', 'UPSET', 'STOMP', 'MOTTO', 'CINCH', 'ELOPE', 'POWER', 'MIDGE', 'TRYST', 'APHID', 'TRITE', 'ANGRY', 'FLOCK', 'WACKY', 'ROOMY', 'WEDGE', 'LIVER', 'BLAND', 'NIGHT', 'MADAM', 'BERTH', 'STEAD', 'VOICE', 'AGAPE', 'FLUFF', 'FIELD', 'SEVER', 'LILAC', 'EGRET', 'PINTO', 'HUTCH', 'GAWKY', 'DROLL', 'RETRO', 'RUSTY', 'BEADY', 'SMITE', 'BRINK', 'AWFUL', 'GLOAT', 'INPUT', 'LOSER', 'CACAO', 'BLOWN', 'APRON', 'PRIMO', 'ATONE', 'DONOR', 'FLOAT', 'GOOSE', 'PIETY', 'GIRTH', 'TRAIT', 'FLOOD', 'GLOOM', 'DEPTH', 'FROTH', 'PHASE', 'SHOWY', 'CREAK', 'MANOR', 'ATOLL', 'BAYOU', 'CREPT', 'TIARA', 'ASSET', 'VOUCH', 'ALBUM', 'HINGE', 'MONEY', 'SCRAP', 'GAMER', 'GLASS', 'SCOUR', 'BEING', 'DELVE', 'YIELD', 'METAL', 'TIPSY', 'SLUNG', 'FARCE', 'GECKO', 'SHINE', 'CANNY', 'MIDST', 'BADGE', 'HOMER', 'TRAIN', 'HAIRY', 'STORY', 'FORGO', 'LARVA', 'TRASH', 'ZESTY', 'SHOWN', 'HEIST', 'ASKEW', 'INERT', 'OLIVE', 'PLANT', 'OXIDE', 'CARGO', 'FOYER', 'FLAIR', 'AMPLE', 'CHEEK', 'SHAME', 'MINCE', 'CHUNK', 'ROYAL', 'SQUAD', 'BLACK', 'STAIR', 'SCARE', 'FORAY', 'COMMA', 'NATAL', 'SHAWL', 'FEWER', 'TROPE', 'SNOUT', 'LOWLY', 'STOVE', 'SHALL', 'FOUND', 'NYMPH', 'EPOXY', 'DEPOT', 'CHEST', 'PURGE', 'SLOSH', 'THEIR', 'RENEW', 'ALLOW', 'SAUTE', 'MOVIE', 'CATER', 'TEASE', 'SMELT', 'FOCUS', 'TODAY', 'WATCH', 'LAPSE', 'MONTH', 'SWEET', 'HOARD', 'CLOTH', 'BRINE', 'AHEAD', 'MOURN', 'NASTY', 'RUPEE', 'CHOKE', 'CHANT', 'SPILL', 'VIVID', 'BLOKE', 'TROVE', 'THORN', 'OTHER', 'TACIT', 'SWILL', 'DODGE', 'SHAKE', 'CAULK', 'AROMA', 'CYNIC', 'ROBIN', 'ULTRA', 'ULCER', 'PAUSE', 'HUMOR', 'FRAME', 'ELDER', 'SKILL', 'ALOFT', 'PLEAT', 'SHARD', 'MOIST', 'THOSE', 'LIGHT', 'WRUNG', 'COULD', 'PERKY', 'MOUNT', 'WHACK', 'SUGAR', 'KNOLL', 'CRIMP', 'WINCE', 'PRICK', 'ROBOT', 'POINT', 'PROXY', 'SHIRE', 'SOLAR', 'PANIC', 'TANGY', 'ABBEY', 'FAVOR', 'DRINK', 'QUERY', 'GORGE', 'CRANK', 'SLUMP', 'BANAL', 'TIGER', 'SIEGE', 'TRUSS', 'BOOST', 'REBUS', 'UNIFY', 'TROLL', 'TAPIR', 'ASIDE', 'FERRY', 'ACUTE', 'PICKY', 'WEARY', 'GRIPE', 'CRAZE', 'PLUCK', 'BRAKE', 'BATON', 'CHAMP', 'PEACH', 'USING', 'TRACE', 'VITAL', 'SONIC', 'MASSE', 'CONIC', 'VIRAL', 'RHINO', 'BREAK', 'TRIAD', 'EPOCH', 'USHER', 'EXULT', 'GRIME', 'CHEAT', 'SOLVE', 'BRING', 'PROVE', 'STORE', 'TILDE', 'CLOCK', 'WROTE', 'RETCH', 'PERCH', 'ROUGE', 'RADIO', 'SURER', 'FINER', 'VODKA', 'HERON', 'CHILL', 'GAUDY', 'PITHY', 'SMART', 'BADLY', 'ROGUE', 'GROUP', 'FIXER', 'GROIN', 'DUCHY', 'COAST', 'BLURT', 'PULPY', 'ALTAR', 'GREAT', 'BRIAR', 'CLICK', 'GOUGE', 'WORLD', 'ERODE', 'BOOZY', 'DOZEN', 'FLING', 'GROWL', 'ABYSS', 'STEED', 'ENEMA', 'JAUNT', 'COMET', 'TWEED', 'PILOT', 'DUTCH', 'BELCH', 'OUGHT', 'DOWRY', 'THUMB', 'HYPER', 'HATCH', 'ALONE', 'MOTOR', 'ABACK', 'GUILD', 'KEBAB', 'SPEND', 'FJORD', 'ESSAY', 'SPRAY', 'SPICY', 'AGATE', 'SALAD', 'BASIC', 'MOULT', 'CORNY', 'FORGE', 'CIVIC', 'ISLET', 'LABOR', 'GAMMA', 'LYING', 'AUDIT', 'ROUND', 'LOOPY', 'LUSTY', 'GOLEM', 'GONER', 'GREET', 'START', 'LAPEL', 'BIOME', 'PARRY', 'SHRUB', 'FRONT', 'WOOER', 'TOTEM', 'FLICK', 'DELTA', 'BLEED', 'ARGUE', 'SWIRL', 'ERROR', 'AGREE', 'OFFAL', 'FLUME', 'CRASS', 'PANEL', 'STOUT', 'BRIBE', 'DRAIN', 'YEARN', 'PRINT', 'SEEDY', 'IVORY', 'BELLY', 'STAND', 'FIRST', 'FORTH', 'BOOBY', 'FLESH', 'UNMET', 'LINEN', 'MAXIM', 'POUND', 'MIMIC', 'SPIKE', 'CLUCK', 'CRATE', 'DIGIT', 'REPAY', 'SOWER', 'CRAZY', 'ADOBE', 'OUTDO', 'TRAWL', 'WHELP', 'UNFED', 'PAPER', 'STAFF', 'CROAK', 'HELIX', 'FLOSS', 'PRIDE', 'BATTY', 'REACT', 'MARRY', 'ABASE', 'COLON', 'STOOL', 'CRUST', 'FRESH', 'DEATH', 'MAJOR', 'FEIGN', 'ABATE', 'BENCH', 'QUIET', 'GRADE', 'STINK', 'KARMA', 'MODEL', 'DWARF', 'HEATH', 'SERVE', 'NAVAL', 'EVADE', 'FOCAL', 'BLUSH', 'AWAKE', 'HUMPH', 'SISSY', 'REBUT', 'CIGAR']
+
+const allWordMap = new Map([
+  ['A', ['AAHED', 'AALII', 'AARGH', 'ABACA', 'ABACI', 'ABAFT', 'ABAKA', 'ABAMP', 'ABASH', 'ABAYA', 'ABBAS', 'ABBES', 'ABEAM', 'ABELE', 'ABETS', 'ABLED', 'ABLER', 'ABLES', 'ABMHO', 'ABODE', 'ABOHM', 'ABOIL', 'ABOMA', 'ABOON', 'ABORT', 'ABRIS', 'ABUSE', 'ABUTS', 'ABUZZ', 'ABYES', 'ABYSM', 'ACARI', 'ACERB', 'ACETA', 'ACHED', 'ACHES', 'ACHOO', 'ACIDS', 'ACIDY', 'ACING', 'ACINI', 'ACKEE', 'ACMES', 'ACMIC', 'ACNED', 'ACNES', 'ACOCK', 'ACOLD', 'ACRED', 'ACRES', 'ACTED', 'ACTIN', 'ACYLS', 'ADDAX', 'ADDED', 'ADDER', 'ADDLE', 'ADEEM', 'ADIEU', 'ADIOS', 'ADITS', 'ADMAN', 'ADMEN', 'ADMIX', 'ADOBO', 'ADORN', 'ADOWN', 'ADOZE', 'ADUNC', 'ADUST', 'ADYTA', 'ADZED', 'ADZES', 'AECIA', 'AEDES', 'AEGIS', 'AEONS', 'AERIE', 'AFARS', 'AFIRE', 'AFOAM', 'AFORE', 'AFOUL', 'AFRIT', 'AGAMA', 'AGARS', 'AGAVE', 'AGAZE', 'AGENE', 'AGERS', 'AGGER', 'AGGIE', 'AGGRO', 'AGHAS', 'AGIOS', 'AGISM', 'AGIST', 'AGITA', 'AGLEE', 'AGLET', 'AGLEY', 'AGMAS', 'AGONE', 'AGONS', 'AGORA', 'AGRIA', 'AGUES', 'AHING', 'AHOLD', 'AHULL', 'AIDED', 'AIDER', 'AIDES', 'AILED', 'AIMED', 'AIMER', 'AIOLI', 'AIRED', 'AIRER', 'AIRNS', 'AIRTH', 'AIRTS', 'AITCH', 'AIVER', 'AJIVA', 'AJUGA', 'AKEES', 'AKELA', 'AKENE', 'ALACK', 'ALAMO', 'ALAND', 'ALANE', 'ALANG', 'ALANS', 'ALANT', 'ALARY', 'ALATE', 'ALBAS', 'ALCID', 'ALDER', 'ALDOL', 'ALECS', 'ALEFS', 'ALEPH', 'ALFAS', 'ALGAE', 'ALGAL', 'ALGAS', 'ALGID', 'ALGIN', 'ALGOR', 'ALGUM', 'ALIAS', 'ALIBI', 'ALIFS', 'ALIGN', 'ALINE', 'ALIST', 'ALIYA', 'ALKIE', 'ALKYD', 'ALKYL', 'ALLAY', 'ALLEE', 'ALLOD', 'ALLOY', 'ALLYL', 'ALMAH', 'ALMAS', 'ALMEH', 'ALMES', 'ALMUD', 'ALMUG', 'ALOES', 'ALOHA', 'ALOIN', 'ALTHO', 'ALTOS', 'ALULA', 'ALUMS', 'ALURE', 'ALWAY', 'AMAHS', 'AMAIN', 'AMAZE', 'AMBIT', 'AMBOS', 'AMBRY', 'AMEBA', 'AMEER', 'AMEND', 'AMENS', 'AMENT', 'AMIAS', 'AMICE', 'AMICI', 'AMIDE', 'AMIDO', 'AMIDS', 'AMIES', 'AMIGA', 'AMIGO', 'AMINE', 'AMINO', 'AMINS', 'AMIRS', 'AMITY', 'AMMOS', 'AMNIA', 'AMNIC', 'AMNIO', 'AMOKS', 'AMOLE', 'AMORT', 'AMOUR', 'AMPED', 'AMPUL', 'AMUCK', 'AMYLS', 'ANCHO', 'ANCON', 'ANDRO', 'ANEAR', 'ANELE', 'ANENT', 'ANGAS', 'ANGLO', 'ANILE', 'ANILS', 'ANIMA', 'ANIME', 'ANIMI', 'ANION', 'ANISE', 'ANKHS', 'ANKUS', 'ANLAS', 'ANNAL', 'ANNAS', 'ANNUL', 'ANOAS', 'ANOLE', 'ANOMY', 'ANSAE', 'ANTAE', 'ANTAS', 'ANTED', 'ANTES', 'ANTIS', 'ANTRA', 'ANTRE', 'ANTSY', 'ANYON', 'APACE', 'APEAK', 'APEEK', 'APERS', 'APERY', 'APHIS', 'APIAN', 'APING', 'APISH', 'APNEA', 'APODS', 'APORT', 'APPAL', 'APPEL', 'APRES', 'APSES', 'APSIS', 'APTER', 'AQUAE', 'AQUAS', 'ARAKS', 'ARAME', 'ARCED', 'ARCUS', 'ARDEB', 'AREAE', 'AREAL', 'AREAS', 'ARECA', 'AREIC', 'ARENA', 'ARENE', 'AREPA', 'ARETE', 'ARGAL', 'ARGIL', 'ARGLE', 'ARGOL', 'ARGON', 'ARGOT', 'ARGUS', 'ARHAT', 'ARIAS', 'ARIEL', 'ARILS', 'ARLES', 'ARMED', 'ARMER', 'ARMET', 'ARMOR', 'AROID', 'AROSE', 'ARPEN', 'ARRAS', 'ARRAY', 'ARRIS', 'ARSES', 'ARSIS', 'ARSON', 'ARTAL', 'ARTEL', 'ARUMS', 'ARVAL', 'ARVOS', 'ARYLS', 'ASANA', 'ASCUS', 'ASDIC', 'ASHED', 'ASHES', 'ASKED', 'ASKER', 'ASKOI', 'ASKOS', 'ASPEN', 'ASPER', 'ASPIC', 'ASPIS', 'ASSAI', 'ASTER', 'ASTIR', 'ASYLA', 'ATAPS', 'ATAXY', 'ATILT', 'ATMAN', 'ATMAS', 'ATOMS', 'ATOMY', 'ATONY', 'ATOPY', 'ATRIP', 'ATTAR', 'AUDAD', 'AUGER', 'AUGHT', 'AUGUR', 'AULIC', 'AUNTS', 'AUNTY', 'AURAE', 'AURAL', 'AURAR', 'AURAS', 'AUREI', 'AURES', 'AURIC', 'AURIS', 'AURUM', 'AUTOS', 'AUXIN', 'AVANT', 'AVAST', 'AVENS', 'AVERS', 'AVGAS', 'AVIAN', 'AVION', 'AVISO', 'AVOWS', 'AWING', 'AWNED', 'AWOLS', 'AXELS', 'AXIAL', 'AXILE', 'AXILS', 'AXING', 'AXION', 'AXITE', 'AXLED', 'AXLES', 'AXMAN', 'AXMEN', 'AXONE', 'AXONS', 'AYAHS', 'AYINS', 'AZANS', 'AZIDE', 'AZIDO', 'AZINE', 'AZLON', 'AZOIC', 'AZOLE', 'AZONS', 'AZOTE', 'AZOTH', 'AZUKI']],
+  ['B', ['BAAED', 'BAALS', 'BABAS', 'BABEL', 'BABES', 'BABKA', 'BABOO', 'BABUL', 'BABUS', 'BACCA', 'BACKS', 'BADDY', 'BAFFS', 'BAFFY', 'BAGGY', 'BAHTS', 'BAILS', 'BAIRN', 'BAITH', 'BAITS', 'BAIZA', 'BAIZE', 'BAKED', 'BAKES', 'BALAS', 'BALDS', 'BALDY', 'BALED', 'BALES', 'BALKS', 'BALKY', 'BALLY', 'BALMS', 'BANCO', 'BANDA', 'BANDS', 'BANDY', 'BANED', 'BANES', 'BANGS', 'BANKS', 'BANNS', 'BANTY', 'BARBE', 'BARBS', 'BARCA', 'BARDE', 'BARDS', 'BARED', 'BARER', 'BARES', 'BARFS', 'BARIC', 'BARKS', 'BARKY', 'BARMS', 'BARMY', 'BARNS', 'BARNY', 'BARRE', 'BARYE', 'BASAL', 'BASED', 'BASER', 'BASES', 'BASIS', 'BASKS', 'BASSI', 'BASSO', 'BASSY', 'BASTS', 'BATED', 'BATES', 'BATHS', 'BATIK', 'BATTS', 'BATTU', 'BAUDS', 'BAULK', 'BAWDS', 'BAWLS', 'BAWTY', 'BAYED', 'BAZAR', 'BAZOO', 'BEADS', 'BEAKS', 'BEAKY', 'BEAMS', 'BEAMY', 'BEANO', 'BEANS', 'BEARS', 'BEATS', 'BEAUS', 'BEAUX', 'BEBOP', 'BECAP', 'BECKS', 'BEDEL', 'BEDEW', 'BEDIM', 'BEECH', 'BEEDI', 'BEEFS', 'BEEPS', 'BEERS', 'BEERY', 'BEETS', 'BEFOG', 'BEGAN', 'BEGAT', 'BEGOT', 'BEGUM', 'BEIGE', 'BEIGY', 'BELAY', 'BELGA', 'BELLS', 'BELON', 'BELTS', 'BEMAS', 'BEMIX', 'BENDS', 'BENDY', 'BENES', 'BENNE', 'BENNI', 'BENNY', 'BENTO', 'BENTS', 'BERGS', 'BERKS', 'BERME', 'BERMS', 'BERRY', 'BERYL', 'BESES', 'BESOM', 'BESOT', 'BESTS', 'BETAS', 'BETEL', 'BETHS', 'BETON', 'BETTA', 'BEVOR', 'BEWIG', 'BEZEL', 'BEZIL', 'BHANG', 'BHOOT', 'BHUTS', 'BIALI', 'BIALY', 'BIBBS', 'BIBLE', 'BICES', 'BIDDY', 'BIDED', 'BIDER', 'BIDES', 'BIDET', 'BIDIS', 'BIELD', 'BIERS', 'BIFFS', 'BIFFY', 'BIFID', 'BIGGY', 'BIGHT', 'BIGLY', 'BIGOS', 'BIGOT', 'BIJOU', 'BIKED', 'BIKER', 'BIKES', 'BIKIE', 'BILBO', 'BILBY', 'BILES', 'BILGY', 'BILKS', 'BILLS', 'BILLY', 'BIMAH', 'BIMAS', 'BIMBO', 'BINAL', 'BINDI', 'BINDS', 'BINER', 'BINES', 'BINGO', 'BINIT', 'BINTS', 'BIOGS', 'BIONT', 'BIOTA', 'BIPED', 'BIPOD', 'BIRDS', 'BIRDY', 'BIRKS', 'BIRLE', 'BIRLS', 'BIROS', 'BIRRS', 'BIRSE', 'BISES', 'BISKS', 'BISON', 'BITER', 'BITES', 'BITSY', 'BITTS', 'BITTY', 'BIZES', 'BLABS', 'BLAFF', 'BLAHS', 'BLAIN', 'BLAMS', 'BLASE', 'BLATE', 'BLATS', 'BLAWN', 'BLAWS', 'BLEAR', 'BLEBS', 'BLENT', 'BLESS', 'BLEST', 'BLETS', 'BLIMY', 'BLIND', 'BLING', 'BLINI', 'BLIPS', 'BLITE', 'BLITZ', 'BLOAT', 'BLOBS', 'BLOCS', 'BLOGS', 'BLOOD', 'BLOOP', 'BLOTS', 'BLOWS', 'BLOWY', 'BLUBS', 'BLUED', 'BLUER', 'BLUES', 'BLUET', 'BLUEY', 'BLUME', 'BLURS', 'BLYPE', 'BOARS', 'BOART', 'BOATS', 'BOBBY', 'BOCCE', 'BOCCI', 'BOCHE', 'BOCKS', 'BODED', 'BODES', 'BOFFO', 'BOFFS', 'BOGAN', 'BOGEY', 'BOGGY', 'BOGIE', 'BOGLE', 'BOGUS', 'BOHEA', 'BOHOS', 'BOILS', 'BOING', 'BOINK', 'BOITE', 'BOKEH', 'BOLAR', 'BOLAS', 'BOLDS', 'BOLES', 'BOLLS', 'BOLOS', 'BOLTS', 'BOLUS', 'BOMBE', 'BOMBS', 'BONDS', 'BONED', 'BONES', 'BONEY', 'BONGS', 'BONKS', 'BONNE', 'BONNY', 'BONZE', 'BOODY', 'BOOED', 'BOOGY', 'BOOKS', 'BOOMS', 'BOOMY', 'BOONS', 'BOORS', 'BOOTH', 'BOOTS', 'BORAL', 'BORAS', 'BORED', 'BORER', 'BORES', 'BORIC', 'BORKS', 'BORON', 'BORTS', 'BORTY', 'BORTZ', 'BOSKS', 'BOSKY', 'BOSOM', 'BOSON', 'BOSUN', 'BOTAS', 'BOTCH', 'BOTEL', 'BOTHY', 'BOTTS', 'BOULE', 'BOUND', 'BOURG', 'BOURN', 'BOUSE', 'BOUSY', 'BOUTS', 'BOVID', 'BOWED', 'BOWEL', 'BOWER', 'BOWLS', 'BOWSE', 'BOXED', 'BOXES', 'BOYAR', 'BOYLA', 'BOYOS', 'BOZOS', 'BRACH', 'BRACT', 'BRADS', 'BRAES', 'BRAGS', 'BRAIL', 'BRAKY', 'BRANK', 'BRANS', 'BRANT', 'BRATS', 'BRAVA', 'BRAVI', 'BRAWL', 'BRAWS', 'BRAXY', 'BRAYS', 'BRAZA', 'BRAZE', 'BREAM', 'BREDE', 'BREES', 'BRENS', 'BRENT', 'BREVE', 'BREWS', 'BRICK', 'BRIER', 'BRIES', 'BRIGS', 'BRILL', 'BRIMS', 'BRINS', 'BRIOS', 'BRISS', 'BRITH', 'BRITS', 'BRITT', 'BROCK', 'BROIL', 'BROME', 'BROMO', 'BRONC', 'BROOS', 'BROSE', 'BROSY', 'BROWS', 'BRUGH', 'BRUIN', 'BRUIT', 'BRUME', 'BRUNG', 'BRUNT', 'BRUSK', 'BRUTS', 'BUBAL', 'BUBBA', 'BUBBY', 'BUBUS', 'BUCKO', 'BUCKS', 'BUFFI', 'BUFFO', 'BUFFS', 'BUFFY', 'BUHLS', 'BUHRS', 'BULBS', 'BULGY', 'BULKS', 'BULLA', 'BULLS', 'BUMFS', 'BUMPH', 'BUMPS', 'BUMPY', 'BUNAS', 'BUNCO', 'BUNDS', 'BUNDT', 'BUNGS', 'BUNKO', 'BUNKS', 'BUNNS', 'BUNTS', 'BUNYA', 'BUOYS', 'BUPPY', 'BURAN', 'BURAS', 'BURBS', 'BURDS', 'BURET', 'BURGH', 'BURGS', 'BURIN', 'BURKA', 'BURKE', 'BURLS', 'BURNS', 'BURPS', 'BURQA', 'BURRO', 'BURRS', 'BURRY', 'BURSA', 'BURSE', 'BURST', 'BUSBY', 'BUSED', 'BUSES', 'BUSHY', 'BUSKS', 'BUSTS', 'BUSTY', 'BUTCH', 'BUTEO', 'BUTES', 'BUTLE', 'BUTTE', 'BUTTS', 'BUTTY', 'BUTUT', 'BUTYL', 'BUXOM', 'BWANA', 'BYRES', 'BYRLS', 'BYSSI', 'BYTES', 'BYWAY']],
+  ['C', ['CABAL', 'CABBY', 'CABER', 'CABIN', 'CABOB', 'CACAS', 'CADDY', 'CADES', 'CADGE', 'CADGY', 'CADIS', 'CADRE', 'CAECA', 'CAFES', 'CAFFS', 'CAGED', 'CAGER', 'CAGES', 'CAGEY', 'CAHOW', 'CAIDS', 'CAINS', 'CAIRD', 'CAIRN', 'CAJON', 'CAKED', 'CAKES', 'CAKEY', 'CALFS', 'CALIF', 'CALIX', 'CALKS', 'CALLA', 'CALLS', 'CALMS', 'CALOS', 'CALVE', 'CALYX', 'CAMAS', 'CAMES', 'CAMOS', 'CAMPI', 'CAMPO', 'CAMPS', 'CAMPY', 'CANAL', 'CANED', 'CANER', 'CANES', 'CANID', 'CANNA', 'CANSO', 'CANST', 'CANTO', 'CANTS', 'CANTY', 'CAPED', 'CAPES', 'CAPHS', 'CAPIZ', 'CAPON', 'CAPOS', 'CAPUT', 'CARBO', 'CARBS', 'CARDS', 'CARED', 'CARER', 'CARES', 'CARET', 'CAREX', 'CARKS', 'CARLE', 'CARLS', 'CARNS', 'CARNY', 'CAROB', 'CARPI', 'CARPS', 'CARRS', 'CARSE', 'CARTE', 'CARTS', 'CASAS', 'CASED', 'CASES', 'CASKS', 'CASKY', 'CASTE', 'CASTS', 'CASUS', 'CATES', 'CAULD', 'CAULS', 'CAVED', 'CAVER', 'CAVES', 'CAVIE', 'CAVIL', 'CAWED', 'CEBID', 'CECAL', 'CECUM', 'CEDED', 'CEDER', 'CEDES', 'CEDIS', 'CEIBA', 'CEILI', 'CEILS', 'CELEB', 'CELLA', 'CELLI', 'CELLS', 'CELOM', 'CELTS', 'CENSE', 'CENTO', 'CENTS', 'CENTU', 'CEORL', 'CEPES', 'CERCI', 'CERED', 'CERES', 'CERIA', 'CERIC', 'CEROS', 'CESTA', 'CESTI', 'CETES', 'CHADS', 'CHAFF', 'CHAIS', 'CHAMS', 'CHANG', 'CHAPE', 'CHAPS', 'CHAPT', 'CHARE', 'CHARK', 'CHARR', 'CHARS', 'CHARY', 'CHATS', 'CHAWS', 'CHAYS', 'CHEEP', 'CHEFS', 'CHELA', 'CHEMO', 'CHERT', 'CHESS', 'CHETH', 'CHEVY', 'CHEWS', 'CHEWY', 'CHIAO', 'CHIAS', 'CHICA', 'CHICK', 'CHICO', 'CHICS', 'CHIEL', 'CHILE', 'CHILI', 'CHIMB', 'CHIMP', 'CHINA', 'CHINE', 'CHINO', 'CHINS', 'CHIPS', 'CHIRK', 'CHIRM', 'CHIRO', 'CHIRR', 'CHIRU', 'CHITS', 'CHIVE', 'CHIVY', 'CHODE', 'CHOKY', 'CHOLA', 'CHOMP', 'CHOOK', 'CHOPS', 'CHOTT', 'CHOWS', 'CHUBS', 'CHUFA', 'CHUFF', 'CHUGS', 'CHUMS', 'CHURL', 'CHURN', 'CHURR', 'CHYLE', 'CHYME', 'CIBOL', 'CILIA', 'CIMEX', 'CINES', 'CIONS', 'CIRES', 'CIRRI', 'CISCO', 'CISSY', 'CISTS', 'CITED', 'CITER', 'CITES', 'CIVET', 'CIVIE', 'CIVVY', 'CLACH', 'CLACK', 'CLADE', 'CLADS', 'CLAGS', 'CLAIM', 'CLAMS', 'CLANG', 'CLANK', 'CLANS', 'CLAPS', 'CLAPT', 'CLARO', 'CLARY', 'CLAST', 'CLAVE', 'CLAVI', 'CLAWS', 'CLAYS', 'CLEAT', 'CLEEK', 'CLEFS', 'CLEPE', 'CLEPT', 'CLEWS', 'CLIFT', 'CLIME', 'CLINE', 'CLIPS', 'CLIPT', 'CLODS', 'CLOGS', 'CLOMB', 'CLOMP', 'CLONK', 'CLONS', 'CLOOT', 'CLOPS', 'CLOTS', 'CLOUR', 'CLOUT', 'CLOYS', 'CLOZE', 'CLUBS', 'CLUED', 'CLUES', 'CLUNK', 'CNIDA', 'COACT', 'COALA', 'COALS', 'COALY', 'COAPT', 'COATI', 'COATS', 'COBBS', 'COBBY', 'COBIA', 'COBLE', 'COBRA', 'COCAS', 'COCCI', 'COCKY', 'COCOS', 'CODAS', 'CODEC', 'CODED', 'CODEN', 'CODER', 'CODES', 'CODEX', 'CODON', 'COEDS', 'COFFS', 'COGON', 'COHOG', 'COHOS', 'COIFS', 'COIGN', 'COILS', 'COINS', 'COIRS', 'COKED', 'COKES', 'COLAS', 'COLBY', 'COLDS', 'COLED', 'COLES', 'COLIN', 'COLLY', 'COLOG', 'COLOR', 'COLTS', 'COLZA', 'COMAE', 'COMAL', 'COMAS', 'COMBE', 'COMBO', 'COMBS', 'COMER', 'COMES', 'COMIC', 'COMIX', 'COMMY', 'COMPO', 'COMPS', 'COMPT', 'COMTE', 'CONED', 'CONES', 'CONEY', 'CONGA', 'CONGE', 'CONGO', 'CONIN', 'CONKS', 'CONKY', 'CONNS', 'CONTE', 'CONTO', 'CONUS', 'COOCH', 'COOED', 'COOEE', 'COOER', 'COOEY', 'COOFS', 'COOKS', 'COOKY', 'COOLS', 'COOLY', 'COOMB', 'COONS', 'COOPS', 'COOPT', 'COOTS', 'COPAL', 'COPAY', 'COPED', 'COPEN', 'COPER', 'COPES', 'COPRA', 'COPSE', 'CORBY', 'CORDS', 'CORED', 'CORES', 'CORGI', 'CORIA', 'CORKS', 'CORKY', 'CORMS', 'CORNS', 'CORNU', 'CORPS', 'CORSE', 'COSEC', 'COSES', 'COSET', 'COSEY', 'COSIE', 'COSTA', 'COSTS', 'COTAN', 'COTED', 'COTES', 'COTTA', 'COUDE', 'COUGH', 'COUPE', 'COUPS', 'COUTH', 'COVED', 'COVES', 'COVEY', 'COVIN', 'COWED', 'COWLS', 'COWRY', 'COXAE', 'COXAL', 'COXED', 'COXES', 'COYED', 'COYER', 'COYPU', 'COZEN', 'COZES', 'COZEY', 'COZIE', 'CRAAL', 'CRABS', 'CRACK', 'CRAGS', 'CRAKE', 'CRAMS', 'CRAPE', 'CRAPS', 'CRASH', 'CRAWS', 'CREDS', 'CREEK', 'CREEL', 'CREEP', 'CREME', 'CREPY', 'CRESS', 'CREWS', 'CRIBS', 'CRICK', 'CRIED', 'CRIER', 'CRIES', 'CRIPE', 'CRITS', 'CROCI', 'CROCS', 'CROFT', 'CRONY', 'CROON', 'CROPS', 'CRORE', 'CROUP', 'CROWS', 'CROZE', 'CRUCK', 'CRUDE', 'CRUDS', 'CRUET', 'CRUMP', 'CRUOR', 'CRURA', 'CRUSE', 'CRWTH', 'CUBBY', 'CUBEB', 'CUBED', 'CUBER', 'CUBES', 'CUDDY', 'CUFFS', 'CUIFS', 'CUING', 'CUISH', 'CUKES', 'CULCH', 'CULET', 'CULEX', 'CULLS', 'CULLY', 'CULMS', 'CULPA', 'CULTI', 'CULTS', 'CUPEL', 'CUPID', 'CUPPA', 'CUPPY', 'CURBS', 'CURCH', 'CURDS', 'CURDY', 'CURED', 'CURER', 'CURES', 'CURET', 'CURFS', 'CURIA', 'CURIE', 'CURLS', 'CURNS', 'CURRS', 'CURRY', 'CURST', 'CURVY', 'CUSEC', 'CUSHY', 'CUSKS', 'CUSPS', 'CUSSO', 'CUTCH', 'CUTER', 'CUTES', 'CUTEY', 'CUTIE', 'CUTIN', 'CUTIS', 'CUTTY', 'CUTUP', 'CUVEE', 'CYANO', 'CYANS', 'CYCAD', 'CYCAS', 'CYCLO', 'CYDER', 'CYLIX', 'CYMAE', 'CYMAR', 'CYMAS', 'CYMES', 'CYMOL', 'CYSTS', 'CYTON', 'CZARS']],
+  ['D', ['DACES', 'DACHA', 'DADAS', 'DADOS', 'DAFFS', 'DAFFY', 'DAGGA', 'DAHLS', 'DAILY', 'DAIRY', 'DALES', 'DAMAN', 'DAMAR', 'DAMES', 'DAMNS', 'DAMPS', 'DANGS', 'DANIO', 'DARBS', 'DARED', 'DARER', 'DARES', 'DARIC', 'DARKS', 'DARNS', 'DARTS', 'DASHI', 'DASHY', 'DATED', 'DATER', 'DATES', 'DATOS', 'DATTO', 'DAUBE', 'DAUBS', 'DAUBY', 'DAUTS', 'DAVEN', 'DAVIT', 'DAWED', 'DAWEN', 'DAWKS', 'DAWNS', 'DAWTS', 'DAZED', 'DAZES', 'DEADS', 'DEAIR', 'DEALS', 'DEALT', 'DEANS', 'DEARS', 'DEARY', 'DEASH', 'DEAVE', 'DEBAG', 'DEBAR', 'DEBTS', 'DEBYE', 'DECAF', 'DECKS', 'DECOS', 'DEDAL', 'DEEDS', 'DEEDY', 'DEEMS', 'DEEPS', 'DEERS', 'DEETS', 'DEFAT', 'DEFIS', 'DEFOG', 'DEGAS', 'DEGUM', 'DEICE', 'DEIFY', 'DEIGN', 'DEILS', 'DEISM', 'DEIST', 'DEKED', 'DEKES', 'DEKKO', 'DELED', 'DELES', 'DELFS', 'DELFT', 'DELIS', 'DELLS', 'DELLY', 'DELTS', 'DEMES', 'DEMIC', 'DEMIT', 'DEMOB', 'DEMON', 'DEMOS', 'DEMUR', 'DENAR', 'DENES', 'DENTS', 'DEOXY', 'DERAT', 'DERAY', 'DERBY', 'DERMA', 'DERMS', 'DERRY', 'DESEX', 'DESKS', 'DEVAS', 'DEVEL', 'DEVON', 'DEWAN', 'DEWAR', 'DEWAX', 'DEWED', 'DEXES', 'DEXIE', 'DHAKS', 'DHALS', 'DHOBI', 'DHOLE', 'DHOTI', 'DHOWS', 'DHUTI', 'DIALS', 'DIAZO', 'DICED', 'DICER', 'DICES', 'DICKY', 'DICOT', 'DICTA', 'DICTY', 'DIDIE', 'DIDOS', 'DIDST', 'DIENE', 'DIETS', 'DIFFS', 'DIGHT', 'DIKED', 'DIKER', 'DIKES', 'DIKEY', 'DILLS', 'DILLY', 'DIMER', 'DIMES', 'DIMLY', 'DINAR', 'DINED', 'DINES', 'DINGE', 'DINGS', 'DINKY', 'DINOS', 'DINTS', 'DIODE', 'DIOLS', 'DIPPY', 'DIPSO', 'DIRAM', 'DIRER', 'DIRKS', 'DIRLS', 'DIRTS', 'DIRTY', 'DISCI', 'DISCS', 'DISHY', 'DISKS', 'DISME', 'DITAS', 'DITCH', 'DITES', 'DITSY', 'DITZY', 'DIVAN', 'DIVAS', 'DIVED', 'DIVER', 'DIVES', 'DIVOT', 'DIVVY', 'DIWAN', 'DIXIE', 'DIXIT', 'DIZEN', 'DJINN', 'DJINS', 'DOATS', 'DOBBY', 'DOBIE', 'DOBLA', 'DOBRA', 'DOBRO', 'DOCKS', 'DODOS', 'DOERS', 'DOEST', 'DOETH', 'DOFFS', 'DOGES', 'DOGEY', 'DOGGO', 'DOGGY', 'DOGIE', 'DOILY', 'DOITS', 'DOJOS', 'DOLCE', 'DOLCI', 'DOLED', 'DOLES', 'DOLLS', 'DOLMA', 'DOLOR', 'DOLTS', 'DOMAL', 'DOMED', 'DOMES', 'DOMIC', 'DONAS', 'DONEE', 'DONGA', 'DONGS', 'DONNA', 'DONNE', 'DONSY', 'DOODY', 'DOOLY', 'DOOMS', 'DOOMY', 'DOORS', 'DOOZY', 'DOPAS', 'DOPED', 'DOPER', 'DOPES', 'DORKS', 'DORKY', 'DORMS', 'DORMY', 'DORPS', 'DORRS', 'DORSA', 'DORTY', 'DOSED', 'DOSER', 'DOSES', 'DOTAL', 'DOTED', 'DOTER', 'DOTES', 'DOTTY', 'DOUCE', 'DOULA', 'DOUMA', 'DOUMS', 'DOURA', 'DOUSE', 'DOVEN', 'DOVES', 'DOWED', 'DOWER', 'DOWIE', 'DOWNS', 'DOWNY', 'DOWSE', 'DOXIE', 'DOYEN', 'DOYLY', 'DOZED', 'DOZER', 'DOZES', 'DRABS', 'DRAFF', 'DRAGS', 'DRAIL', 'DRAKE', 'DRAMS', 'DRANK', 'DRATS', 'DRAVE', 'DRAWL', 'DRAWS', 'DRAYS', 'DREAR', 'DRECK', 'DREED', 'DREES', 'DREGS', 'DREKS', 'DRESS', 'DREST', 'DRIBS', 'DRIED', 'DRIER', 'DRIES', 'DRILY', 'DRIPS', 'DRIPT', 'DROID', 'DROIT', 'DROPS', 'DROPT', 'DROSS', 'DROUK', 'DROWN', 'DRUBS', 'DRUGS', 'DRUID', 'DRUMS', 'DRUPE', 'DRUSE', 'DRYAD', 'DRYLY', 'DUADS', 'DUALS', 'DUCAL', 'DUCAT', 'DUCES', 'DUCKS', 'DUCKY', 'DUCTS', 'DUDDY', 'DUDED', 'DUDES', 'DUELS', 'DUETS', 'DUFFS', 'DUFUS', 'DUITS', 'DUKED', 'DUKES', 'DULIA', 'DULLS', 'DULLY', 'DULSE', 'DUMAS', 'DUMBO', 'DUMBS', 'DUMKA', 'DUMKY', 'DUMPS', 'DUMPY', 'DUNAM', 'DUNCE', 'DUNCH', 'DUNES', 'DUNGS', 'DUNGY', 'DUNKS', 'DUNTS', 'DUOMI', 'DUOMO', 'DUPED', 'DUPER', 'DUPES', 'DUPLE', 'DURAL', 'DURAS', 'DURED', 'DURES', 'DURNS', 'DUROC', 'DUROS', 'DURRA', 'DURRS', 'DURST', 'DURUM', 'DUSKS', 'DUSTS', 'DWEEB', 'DWINE', 'DYADS', 'DYERS', 'DYING', 'DYKED', 'DYKES', 'DYKEY', 'DYNEL', 'DYNES']],
+  ['E', ['EAGRE', 'EARED', 'EARLS', 'EARNS', 'EASED', 'EASES', 'EASTS', 'EATER', 'EAVED', 'EAVES', 'EBBED', 'EBBET', 'EBOLA', 'EBONS', 'EBOOK', 'ECHED', 'ECHES', 'ECHOS', 'ECLAT', 'ECRUS', 'EDEMA', 'EDGED', 'EDGER', 'EDGES', 'EDILE', 'EDITS', 'EDUCE', 'EDUCT', 'EGADS', 'EGERS', 'EGEST', 'EGGAR', 'EGGED', 'EGGER', 'EIDER', 'EIDOS', 'EIKON', 'EKING', 'ELAIN', 'ELAND', 'ELANS', 'ELECT', 'ELEGY', 'ELEMI', 'ELIDE', 'ELINT', 'ELOIN', 'ELUTE', 'ELVER', 'ELVES', 'EMBAR', 'EMBAY', 'EMBOW', 'EMCEE', 'EMEER', 'EMEND', 'EMERY', 'EMEUS', 'EMIRS', 'EMITS', 'EMMER', 'EMMET', 'EMMYS', 'EMOTE', 'EMYDE', 'EMYDS', 'ENATE', 'ENDED', 'ENDER', 'ENDUE', 'ENEMY', 'ENOKI', 'ENOLS', 'ENORM', 'ENOWS', 'ENROL', 'ENSKY', 'ENTIA', 'ENTRY', 'ENURE', 'ENVOI', 'ENZYM', 'EOSIN', 'EPACT', 'EPEES', 'EPHAH', 'EPHAS', 'EPHOD', 'EPHOR', 'EPICS', 'EPODE', 'EQUID', 'ERECT', 'ERGOT', 'ERICA', 'ERNES', 'EROSE', 'ERRED', 'ERSES', 'ERUCT', 'ERUGO', 'ERVIL', 'ESCAR', 'ESCOT', 'ESKAR', 'ESKER', 'ESNES', 'ESSES', 'ESTER', 'ESTOP', 'ETAPE', 'ETHYL', 'ETNAS', 'ETUDE', 'ETUIS', 'ETWEE', 'ETYMA', 'EUROS', 'EVENS', 'EVERT', 'EVICT', 'EVILS', 'EVITE', 'EWERS', 'EXAMS', 'EXECS', 'EXINE', 'EXING', 'EXITS', 'EXONS', 'EXPAT', 'EXPOS', 'EXUDE', 'EXURB', 'EYASS', 'EYERS', 'EYING', 'EYRAS', 'EYRES', 'EYRIE', 'EYRIR']],
+  ['F', ['FACED', 'FACER', 'FACES', 'FACIA', 'FACTS', 'FADDY', 'FADED', 'FADER', 'FADES', 'FADGE', 'FADOS', 'FAENA', 'FAERY', 'FAGGY', 'FAGIN', 'FAILS', 'FAIRS', 'FAIRY', 'FAKED', 'FAKER', 'FAKES', 'FAKEY', 'FAKIR', 'FALLS', 'FAMED', 'FAMES', 'FANES', 'FANGA', 'FANGS', 'FANON', 'FANOS', 'FANUM', 'FAQIR', 'FARAD', 'FARCI', 'FARCY', 'FARDS', 'FARED', 'FARER', 'FARES', 'FARLE', 'FARLS', 'FARMS', 'FAROS', 'FARTS', 'FASTS', 'FATAL', 'FATED', 'FATES', 'FATLY', 'FATSO', 'FATTY', 'FATWA', 'FAUGH', 'FAULD', 'FAUNA', 'FAUNS', 'FAUVE', 'FAVAS', 'FAVES', 'FAVUS', 'FAWNS', 'FAWNY', 'FAXED', 'FAXES', 'FAYED', 'FAZED', 'FAZES', 'FEARS', 'FEASE', 'FEATS', 'FEAZE', 'FECAL', 'FECES', 'FECKS', 'FEDEX', 'FEEBS', 'FEEDS', 'FEELS', 'FEEZE', 'FEINT', 'FEIST', 'FELID', 'FELLA', 'FELLS', 'FELLY', 'FELON', 'FELTS', 'FEMES', 'FEMME', 'FEMUR', 'FENCE', 'FENDS', 'FENNY', 'FEODS', 'FEOFF', 'FERES', 'FERIA', 'FERLY', 'FERMI', 'FERNS', 'FERNY', 'FESSE', 'FESTS', 'FETAL', 'FETAS', 'FETED', 'FETES', 'FETOR', 'FETUS', 'FEUAR', 'FEUDS', 'FEUED', 'FEYER', 'FEYLY', 'FEZES', 'FEZZY', 'FIARS', 'FIATS', 'FIBRE', 'FICES', 'FICHE', 'FICHU', 'FICIN', 'FICUS', 'FIDGE', 'FIDOS', 'FIEFS', 'FIFED', 'FIFER', 'FIFES', 'FIGHT', 'FILAR', 'FILCH', 'FILED', 'FILER', 'FILES', 'FILLE', 'FILLO', 'FILLS', 'FILMI', 'FILMS', 'FILMY', 'FILOS', 'FILTH', 'FILUM', 'FINCA', 'FINDS', 'FINED', 'FINES', 'FINIS', 'FINKS', 'FINNY', 'FINOS', 'FIORD', 'FIQUE', 'FIRED', 'FIRER', 'FIRES', 'FIRMS', 'FIRNS', 'FIRRY', 'FIRTH', 'FISCS', 'FISTS', 'FITCH', 'FITLY', 'FIVER', 'FIVES', 'FIXED', 'FIXES', 'FIXIT', 'FJELD', 'FLABS', 'FLACK', 'FLAGS', 'FLAMS', 'FLAMY', 'FLANS', 'FLAPS', 'FLATS', 'FLAWS', 'FLAWY', 'FLAXY', 'FLAYS', 'FLEAM', 'FLEAS', 'FLECK', 'FLEER', 'FLEES', 'FLEET', 'FLEWS', 'FLEYS', 'FLICS', 'FLIED', 'FLIER', 'FLIES', 'FLIPS', 'FLIRS', 'FLITE', 'FLITS', 'FLOCS', 'FLOES', 'FLOGS', 'FLONG', 'FLOPS', 'FLOTA', 'FLOWS', 'FLUBS', 'FLUED', 'FLUES', 'FLUID', 'FLUKY', 'FLUMP', 'FLUOR', 'FLUSH', 'FLUTY', 'FLUYT', 'FLYBY', 'FLYTE', 'FOALS', 'FOAMS', 'FOEHN', 'FOGEY', 'FOGIE', 'FOHNS', 'FOILS', 'FOINS', 'FOLDS', 'FOLEY', 'FOLIA', 'FOLIC', 'FOLKS', 'FOLKY', 'FONDS', 'FONDU', 'FONTS', 'FOODS', 'FOOLS', 'FOOTS', 'FOOTY', 'FORAM', 'FORBS', 'FORBY', 'FORDO', 'FORDS', 'FORES', 'FORKS', 'FORKY', 'FORME', 'FORMS', 'FORTS', 'FOSSA', 'FOSSE', 'FOULS', 'FOUNT', 'FOURS', 'FOVEA', 'FOWLS', 'FOXED', 'FOXES', 'FRAGS', 'FRANC', 'FRAPS', 'FRASS', 'FRATS', 'FRAUD', 'FRAYS', 'FREED', 'FREER', 'FREES', 'FREMD', 'FRENA', 'FRERE', 'FRETS', 'FRIAR', 'FRIER', 'FRIES', 'FRIGS', 'FRISE', 'FRISK', 'FRITH', 'FRITS', 'FRITT', 'FRIZZ', 'FROES', 'FROGS', 'FRONS', 'FRORE', 'FROSH', 'FROWS', 'FRUGS', 'FRUMP', 'FRYER', 'FUBAR', 'FUBSY', 'FUCUS', 'FUDDY', 'FUDGE', 'FUELS', 'FUGAL', 'FUGGY', 'FUGIO', 'FUGLE', 'FUGUS', 'FUJIS', 'FULLS', 'FUMED', 'FUMER', 'FUMES', 'FUMET', 'FUNDI', 'FUNDS', 'FUNGO', 'FUNKS', 'FURAN', 'FURLS', 'FUROR', 'FURRY', 'FURZE', 'FURZY', 'FUSED', 'FUSEE', 'FUSEL', 'FUSES', 'FUSIL', 'FUSSY', 'FUSTY', 'FUTON', 'FUZED', 'FUZEE', 'FUZES', 'FUZIL', 'FYCES', 'FYKES', 'FYTTE']],
+  ['G', ['GABBY', 'GABLE', 'GADDI', 'GADID', 'GADIS', 'GADJE', 'GADJO', 'GAFFE', 'GAFFS', 'GAGED', 'GAGER', 'GAGES', 'GAILY', 'GAINS', 'GAITS', 'GALAH', 'GALAS', 'GALAX', 'GALEA', 'GALES', 'GALLS', 'GALLY', 'GALOP', 'GAMAS', 'GAMAY', 'GAMBA', 'GAMBE', 'GAMBS', 'GAMED', 'GAMES', 'GAMEY', 'GAMIC', 'GAMIN', 'GAMMY', 'GAMPS', 'GANEF', 'GANEV', 'GANGS', 'GANJA', 'GANOF', 'GAOLS', 'GAPED', 'GAPER', 'GAPES', 'GAPPY', 'GARBS', 'GARDA', 'GARNI', 'GARTH', 'GASES', 'GASPS', 'GASSY', 'GASTS', 'GATED', 'GATER', 'GATES', 'GATOR', 'GAUDS', 'GAULT', 'GAUMS', 'GAURS', 'GAUSS', 'GAUZY', 'GAVOT', 'GAWKS', 'GAWPS', 'GAWSY', 'GAYAL', 'GAYER', 'GAYLY', 'GAZAR', 'GAZED', 'GAZER', 'GAZES', 'GAZOO', 'GEARS', 'GECKS', 'GEEKS', 'GEEKY', 'GEEST', 'GELDS', 'GELEE', 'GELID', 'GELTS', 'GEMMA', 'GEMMY', 'GEMOT', 'GENES', 'GENET', 'GENIC', 'GENII', 'GENIP', 'GENOA', 'GENOM', 'GENRO', 'GENTS', 'GENUA', 'GENUS', 'GEODE', 'GEOID', 'GERAH', 'GERMS', 'GERMY', 'GESSO', 'GESTE', 'GESTS', 'GETAS', 'GETUP', 'GEUMS', 'GHAST', 'GHATS', 'GHAUT', 'GHAZI', 'GHEES', 'GHYLL', 'GIBED', 'GIBER', 'GIBES', 'GIFTS', 'GIGAS', 'GIGHE', 'GIGOT', 'GIGUE', 'GILDS', 'GILLS', 'GILLY', 'GILTS', 'GIMEL', 'GIMME', 'GINKS', 'GINNY', 'GINZO', 'GIPON', 'GIPSY', 'GIRDS', 'GIRLS', 'GIRLY', 'GIRNS', 'GIRON', 'GIROS', 'GIRSH', 'GIRTS', 'GISMO', 'GISTS', 'GITES', 'GIVER', 'GIVES', 'GLACE', 'GLADS', 'GLADY', 'GLAIR', 'GLAMS', 'GLANS', 'GLARY', 'GLAZY', 'GLEBA', 'GLEBE', 'GLEDE', 'GLEDS', 'GLEED', 'GLEEK', 'GLEES', 'GLEET', 'GLENS', 'GLEYS', 'GLIAL', 'GLIAS', 'GLIFF', 'GLIME', 'GLIMS', 'GLITZ', 'GLOAM', 'GLOBS', 'GLOGG', 'GLOMS', 'GLOPS', 'GLOST', 'GLOUT', 'GLOWS', 'GLOZE', 'GLUED', 'GLUER', 'GLUES', 'GLUEY', 'GLUGS', 'GLUME', 'GLUMS', 'GLUON', 'GLUTE', 'GLUTS', 'GNARL', 'GNARR', 'GNARS', 'GNATS', 'GNAWN', 'GNAWS', 'GOADS', 'GOALS', 'GOATS', 'GOBAN', 'GOBOS', 'GODET', 'GODLY', 'GOERS', 'GOGOS', 'GOLDS', 'GOLFS', 'GOLLY', 'GOMBO', 'GOMER', 'GONAD', 'GONEF', 'GONGS', 'GONIA', 'GONIF', 'GONOF', 'GONZO', 'GOODS', 'GOOFS', 'GOOKY', 'GOONS', 'GOONY', 'GOOPS', 'GOOPY', 'GOOSY', 'GOPIK', 'GORAL', 'GORED', 'GORES', 'GORMS', 'GORPS', 'GORSE', 'GORSY', 'GOTHS', 'GOURD', 'GOUTS', 'GOUTY', 'GOWAN', 'GOWDS', 'GOWKS', 'GOWNS', 'GOXES', 'GOYIM', 'GRAAL', 'GRABS', 'GRADS', 'GRAMA', 'GRAMP', 'GRAMS', 'GRANA', 'GRANS', 'GRAPE', 'GRAPY', 'GRAYS', 'GRAZE', 'GREBE', 'GREEK', 'GREES', 'GREGO', 'GREYS', 'GRIDE', 'GRIDS', 'GRIFF', 'GRIGS', 'GRILL', 'GRINS', 'GRIOT', 'GRIPS', 'GRIPT', 'GRIPY', 'GRIST', 'GRITH', 'GRITS', 'GROAT', 'GRODY', 'GROGS', 'GROKS', 'GROPE', 'GROSZ', 'GROTS', 'GROWS', 'GRUBS', 'GRUES', 'GRUME', 'GRUMP', 'GRUNT', 'GUACO', 'GUANS', 'GUARS', 'GUCKS', 'GUDES', 'GUFFS', 'GUIDS', 'GUILT', 'GUIRO', 'GULAG', 'GULAR', 'GULCH', 'GULES', 'GULFS', 'GULFY', 'GULLS', 'GULPS', 'GULPY', 'GUMMA', 'GUNKS', 'GUNNY', 'GURGE', 'GURRY', 'GURSH', 'GURUS', 'GUSHY', 'GUSSY', 'GUSTO', 'GUSTS', 'GUTSY', 'GUTTA', 'GUTTY', 'GUYED', 'GUYOT', 'GWINE', 'GYBED', 'GYBES', 'GYOZA', 'GYPSY', 'GYRAL', 'GYRED', 'GYRES', 'GYRON', 'GYROS', 'GYRUS', 'GYVED', 'GYVES']],
+  ['H', ['HAAFS', 'HAARS', 'HABUS', 'HACEK', 'HACKS', 'HADAL', 'HADED', 'HADES', 'HADJI', 'HADST', 'HAEMS', 'HAETS', 'HAFIS', 'HAFIZ', 'HAFTS', 'HAHAS', 'HAIKA', 'HAIKS', 'HAIKU', 'HAILS', 'HAINT', 'HAIRS', 'HAJES', 'HAJIS', 'HAJJI', 'HAKES', 'HAKIM', 'HAKUS', 'HALAL', 'HALED', 'HALER', 'HALES', 'HALID', 'HALLO', 'HALLS', 'HALMA', 'HALMS', 'HALON', 'HALOS', 'HALTS', 'HALVA', 'HAMAL', 'HAMES', 'HAMMY', 'HAMZA', 'HANCE', 'HANDS', 'HANGS', 'HANKS', 'HANKY', 'HANSA', 'HANSE', 'HANTS', 'HAOLE', 'HAPAX', 'HAPLY', 'HARDS', 'HARED', 'HAREM', 'HARES', 'HARKS', 'HARLS', 'HARMS', 'HARPS', 'HARPY', 'HARRY', 'HARTS', 'HASPS', 'HATED', 'HATES', 'HAUGH', 'HAULM', 'HAULS', 'HAUTE', 'HAVER', 'HAVES', 'HAWED', 'HAWKS', 'HAWSE', 'HAYED', 'HAYER', 'HAYEY', 'HAZAN', 'HAZED', 'HAZER', 'HAZES', 'HEADS', 'HEALS', 'HEAPS', 'HEAPY', 'HEARS', 'HEATS', 'HEBES', 'HECKS', 'HEDER', 'HEDGE', 'HEDGY', 'HEEDS', 'HEELS', 'HEEZE', 'HEFTS', 'HEIGH', 'HEILS', 'HEIRS', 'HELIO', 'HELLS', 'HELMS', 'HELOS', 'HELOT', 'HELPS', 'HELVE', 'HEMAL', 'HEMES', 'HEMIC', 'HEMIN', 'HEMPS', 'HEMPY', 'HENGE', 'HENNA', 'HENRY', 'HENTS', 'HERBS', 'HERBY', 'HERDS', 'HERES', 'HERLS', 'HERMA', 'HERMS', 'HERNS', 'HEROS', 'HERRY', 'HERTZ', 'HESTS', 'HETHS', 'HEUCH', 'HEUGH', 'HEWED', 'HEWER', 'HEXAD', 'HEXED', 'HEXER', 'HEXES', 'HEXYL', 'HICKS', 'HIDED', 'HIDER', 'HIDES', 'HIGHS', 'HIGHT', 'HIJAB', 'HIJRA', 'HIKED', 'HIKER', 'HIKES', 'HILAR', 'HILLO', 'HILLS', 'HILTS', 'HILUM', 'HILUS', 'HINDS', 'HINKY', 'HINNY', 'HINTS', 'HIPLY', 'HIPPY', 'HIRED', 'HIREE', 'HIRER', 'HIRES', 'HISSY', 'HISTS', 'HIVED', 'HIVES', 'HOAGY', 'HOARS', 'HOARY', 'HOBOS', 'HOCKS', 'HOCUS', 'HODAD', 'HOERS', 'HOGAN', 'HOGGS', 'HOICK', 'HOISE', 'HOKED', 'HOKES', 'HOKEY', 'HOKKU', 'HOKUM', 'HOLDS', 'HOLED', 'HOLES', 'HOLEY', 'HOLKS', 'HOLLA', 'HOLLO', 'HOLMS', 'HOLTS', 'HOMED', 'HOMES', 'HOMEY', 'HOMIE', 'HONAN', 'HONDA', 'HONED', 'HONER', 'HONES', 'HONGI', 'HONGS', 'HONKS', 'HONKY', 'HONOR', 'HOOCH', 'HOODS', 'HOODY', 'HOOEY', 'HOOFS', 'HOOKA', 'HOOKS', 'HOOKY', 'HOOLY', 'HOOPS', 'HOOTS', 'HOOTY', 'HOPED', 'HOPER', 'HOPES', 'HOPPY', 'HORAH', 'HORAL', 'HORAS', 'HORNS', 'HORST', 'HORSY', 'HOSED', 'HOSEL', 'HOSEN', 'HOSER', 'HOSES', 'HOSEY', 'HOSTA', 'HOSTS', 'HOTCH', 'HOTLY', 'HOURI', 'HOURS', 'HOWES', 'HOWFF', 'HOWFS', 'HOWKS', 'HOWLS', 'HOYAS', 'HOYLE', 'HUBBY', 'HUCKS', 'HUFFS', 'HUFFY', 'HUGER', 'HULAS', 'HULKS', 'HULKY', 'HULLO', 'HULLS', 'HUMIC', 'HUMPS', 'HUMPY', 'HUMUS', 'HUNKS', 'HUNTS', 'HURDS', 'HURLS', 'HURLY', 'HURST', 'HURTS', 'HUSKS', 'HUSKY', 'HUSSY', 'HUZZA', 'HYDRO', 'HYING', 'HYLAS', 'HYMEN', 'HYMNS', 'HYOID', 'HYPED', 'HYPES', 'HYPHA', 'HYPOS', 'HYRAX', 'HYSON']],
+  ['I', ['IAMBI', 'IAMBS', 'ICHOR', 'ICIER', 'ICILY', 'ICKER', 'ICONS', 'ICTIC', 'ICTUS', 'IDEAS', 'IDIOT', 'IDLED', 'IDLES', 'IDOLS', 'IDYLL', 'IDYLS', 'IGGED', 'IGLUS', 'IHRAM', 'IKATS', 'IKONS', 'ILEAC', 'ILEAL', 'ILEUM', 'ILEUS', 'ILIAC', 'ILIAD', 'ILIAL', 'ILIUM', 'ILLER', 'IMAGO', 'IMAMS', 'IMAUM', 'IMBED', 'IMIDE', 'IMIDO', 'IMIDS', 'IMINE', 'IMINO', 'IMMIX', 'IMPED', 'IMPIS', 'IMPLY', 'INAPT', 'INARM', 'INBYE', 'INCOG', 'INCUS', 'INDOL', 'INDOW', 'INDRI', 'INDUE', 'INFIX', 'INFOS', 'INFRA', 'INGLE', 'INGOT', 'INION', 'INKED', 'INKER', 'INKLE', 'INNED', 'INRUN', 'INSET', 'INTIS', 'INURE', 'INURN', 'INVAR', 'IODIC', 'IODID', 'IODIN', 'IOTAS', 'IRADE', 'IRIDS', 'IRING', 'IRKED', 'IROKO', 'IRONE', 'IRONS', 'ISBAS', 'ISLED', 'ISLES', 'ISSEI', 'ISTLE', 'ITEMS', 'ITHER', 'IVIED', 'IVIES', 'IXIAS', 'IXORA', 'IXTLE', 'IZARS']],
+  ['J', ['JABOT', 'JACAL', 'JACKS', 'JACKY', 'JADED', 'JADES', 'JAGER', 'JAGGS', 'JAGGY', 'JAGRA', 'JAILS', 'JAKES', 'JALAP', 'JALOP', 'JAMBE', 'JAMBS', 'JAMMY', 'JANES', 'JANKY', 'JANTY', 'JAPAN', 'JAPED', 'JAPER', 'JAPES', 'JARLS', 'JATOS', 'JAUKS', 'JAUPS', 'JAVAS', 'JAWAN', 'JAWED', 'JEANS', 'JEBEL', 'JEEPS', 'JEERS', 'JEFES', 'JEHAD', 'JEHUS', 'JELLO', 'JELLS', 'JEMMY', 'JENNY', 'JERID', 'JERKS', 'JERRY', 'JESSE', 'JESTS', 'JETES', 'JETON', 'JETTY', 'JIBBS', 'JIBED', 'JIBER', 'JIBES', 'JIFFS', 'JIGGY', 'JIHAD', 'JILLS', 'JILTS', 'JIMMY', 'JIMPY', 'JINGO', 'JINKS', 'JINNI', 'JINNS', 'JISMS', 'JIVED', 'JIVER', 'JIVES', 'JIVEY', 'JNANA', 'JOCKO', 'JOCKS', 'JOEYS', 'JOHNS', 'JOINS', 'JOIST', 'JOKED', 'JOKES', 'JOKEY', 'JOLES', 'JOLTS', 'JOLTY', 'JOMON', 'JONES', 'JORAM', 'JORUM', 'JOTAS', 'JOTTY', 'JOUAL', 'JOUKS', 'JOULE', 'JOWAR', 'JOWED', 'JOWLS', 'JOWLY', 'JOYED', 'JUBAS', 'JUBES', 'JUCOS', 'JUDAS', 'JUDOS', 'JUGAL', 'JUGUM', 'JUICY', 'JUJUS', 'JUKED', 'JUKES', 'JUKUS', 'JULEP', 'JUMPS', 'JUNCO', 'JUNKS', 'JUNKY', 'JUNTA', 'JUNTO', 'JUPES', 'JUPON', 'JURAL', 'JURAT', 'JUREL', 'JUROR', 'JUSTS', 'JUTES', 'JUTTY']],
+  ['K', ['KABAB', 'KABAR', 'KABOB', 'KADIS', 'KAFIR', 'KAGUS', 'KAIAK', 'KAIFS', 'KAILS', 'KAINS', 'KAKAS', 'KAKIS', 'KALAM', 'KALES', 'KALIF', 'KALPA', 'KAMES', 'KAMIK', 'KANAS', 'KANES', 'KANJI', 'KANZU', 'KAONS', 'KAPAS', 'KAPHS', 'KAPOK', 'KAPPA', 'KAPUT', 'KARAT', 'KARNS', 'KAROO', 'KARST', 'KARTS', 'KASHA', 'KATAS', 'KAURI', 'KAURY', 'KAVAS', 'KAYOS', 'KBARS', 'KEBAR', 'KEBOB', 'KECKS', 'KEDGE', 'KEEFS', 'KEEKS', 'KEELS', 'KEENS', 'KEEPS', 'KEETS', 'KEEVE', 'KEIRS', 'KELEP', 'KELIM', 'KELLY', 'KELPS', 'KELPY', 'KELTS', 'KEMPS', 'KEMPT', 'KENAF', 'KENCH', 'KENDO', 'KENOS', 'KENTE', 'KEPIS', 'KERBS', 'KERFS', 'KERNE', 'KERNS', 'KERRY', 'KETCH', 'KETOL', 'KEVEL', 'KEVIL', 'KEXES', 'KEYED', 'KHADI', 'KHAFS', 'KHANS', 'KHAPH', 'KHATS', 'KHEDA', 'KHETH', 'KHETS', 'KHOUM', 'KIANG', 'KIBBE', 'KIBBI', 'KIBEI', 'KIBES', 'KIBLA', 'KICKS', 'KICKY', 'KIDDO', 'KIDDY', 'KIEFS', 'KIERS', 'KIKES', 'KILIM', 'KILLS', 'KILNS', 'KILOS', 'KILTS', 'KILTY', 'KINAS', 'KINDS', 'KINES', 'KINGS', 'KININ', 'KINKS', 'KINKY', 'KINOS', 'KIRKS', 'KIRNS', 'KISSY', 'KISTS', 'KITED', 'KITER', 'KITES', 'KITHE', 'KITHS', 'KITTY', 'KIVAS', 'KIWIS', 'KLICK', 'KLIKS', 'KLONG', 'KLOOF', 'KLUGE', 'KLUTZ', 'KNAPS', 'KNARS', 'KNAUR', 'KNAWE', 'KNEED', 'KNEES', 'KNISH', 'KNITS', 'KNOBS', 'KNOPS', 'KNOSP', 'KNOTS', 'KNOUT', 'KNOWS', 'KNURL', 'KNURS', 'KOANS', 'KOBOS', 'KOELS', 'KOHLS', 'KOINE', 'KOJIS', 'KOLAS', 'KOLOS', 'KOMBU', 'KONKS', 'KOOKS', 'KOOKY', 'KOPEK', 'KOPHS', 'KOPJE', 'KOPPA', 'KORAI', 'KORAS', 'KORAT', 'KORMA', 'KORUN', 'KOTOS', 'KOTOW', 'KRAAL', 'KRAFT', 'KRAIT', 'KRAUT', 'KREEP', 'KREWE', 'KRONA', 'KRONE', 'KROON', 'KRUBI', 'KUDOS', 'KUDUS', 'KUDZU', 'KUFIS', 'KUGEL', 'KUKRI', 'KULAK', 'KUMYS', 'KURTA', 'KURUS', 'KUSSO', 'KVASS', 'KVELL', 'KYACK', 'KYAKS', 'KYARS', 'KYATS', 'KYLIX', 'KYRIE', 'KYTES', 'KYTHE']],
+  ['L', ['LAARI', 'LABRA', 'LACED', 'LACER', 'LACES', 'LACEY', 'LACKS', 'LADED', 'LADER', 'LADES', 'LAEVO', 'LAGAN', 'LAHAR', 'LAICH', 'LAICS', 'LAIGH', 'LAIRD', 'LAIRS', 'LAITH', 'LAITY', 'LAKED', 'LAKER', 'LAKES', 'LAKHS', 'LALLS', 'LAMAS', 'LAMBS', 'LAMBY', 'LAMED', 'LAMER', 'LAMES', 'LAMIA', 'LAMPS', 'LANAI', 'LANDS', 'LANES', 'LAPIN', 'LAPIS', 'LARCH', 'LARDS', 'LARDY', 'LAREE', 'LARES', 'LARGO', 'LARIS', 'LARKS', 'LARKY', 'LARUM', 'LASED', 'LASES', 'LASSI', 'LASTS', 'LATED', 'LATEN', 'LATEX', 'LATHI', 'LATHS', 'LATHY', 'LATKE', 'LAUAN', 'LAUDS', 'LAURA', 'LAVAS', 'LAVED', 'LAVER', 'LAVES', 'LAWED', 'LAWNS', 'LAWNY', 'LAXER', 'LAXES', 'LAXLY', 'LAYED', 'LAYIN', 'LAYUP', 'LAZAR', 'LAZED', 'LAZES', 'LEADS', 'LEADY', 'LEAFS', 'LEAKS', 'LEANS', 'LEANT', 'LEAPS', 'LEARS', 'LEARY', 'LEAVY', 'LEBEN', 'LEDGY', 'LEEKS', 'LEERS', 'LEETS', 'LEFTS', 'LEGAL', 'LEGER', 'LEGES', 'LEGIT', 'LEHRS', 'LEHUA', 'LEMAN', 'LEMMA', 'LENDS', 'LENES', 'LENIS', 'LENOS', 'LENSE', 'LENTO', 'LEONE', 'LEPER', 'LEPTA', 'LESBO', 'LESES', 'LETCH', 'LETHE', 'LETUP', 'LEUDS', 'LEVEE', 'LEVIN', 'LEVIS', 'LEWIS', 'LEXES', 'LEXIS', 'LEZES', 'LEZZY', 'LIANA', 'LIANE', 'LIANG', 'LIARD', 'LIARS', 'LIBER', 'LIBRA', 'LIBRI', 'LICHI', 'LICHT', 'LICIT', 'LICKS', 'LIDAR', 'LIDOS', 'LIEGE', 'LIENS', 'LIERS', 'LIEUS', 'LIEVE', 'LIFER', 'LIFTS', 'LIGAN', 'LIGER', 'LIKED', 'LIKER', 'LIKES', 'LILOS', 'LILTS', 'LIMAN', 'LIMAS', 'LIMBA', 'LIMBI', 'LIMBS', 'LIMBY', 'LIMED', 'LIMEN', 'LIMES', 'LIMEY', 'LIMNS', 'LIMOS', 'LIMPA', 'LIMPS', 'LINAC', 'LINDY', 'LINED', 'LINES', 'LINEY', 'LINGA', 'LINGS', 'LINGY', 'LININ', 'LINKS', 'LINKY', 'LINNS', 'LINOS', 'LINTS', 'LINTY', 'LINUM', 'LIONS', 'LIPAS', 'LIPID', 'LIPIN', 'LIPPY', 'LIRAS', 'LIROT', 'LISLE', 'LISPS', 'LISTS', 'LITAI', 'LITAS', 'LITER', 'LITHO', 'LITRE', 'LIVED', 'LIVEN', 'LIVES', 'LIVRE', 'LLANO', 'LOACH', 'LOADS', 'LOAFS', 'LOAMS', 'LOAMY', 'LOANS', 'LOBAR', 'LOBED', 'LOBES', 'LOBOS', 'LOCHS', 'LOCKS', 'LOCOS', 'LOCUM', 'LODEN', 'LODES', 'LOESS', 'LOFTS', 'LOGAN', 'LOGES', 'LOGGY', 'LOGIA', 'LOGIN', 'LOGOI', 'LOGON', 'LOGOS', 'LOIDS', 'LOINS', 'LOLLS', 'LOLLY', 'LONER', 'LONGE', 'LONGS', 'LOOBY', 'LOOED', 'LOOEY', 'LOOFA', 'LOOFS', 'LOOIE', 'LOOKS', 'LOOMS', 'LOONS', 'LOONY', 'LOOPS', 'LOOSE', 'LOOTS', 'LOPED', 'LOPER', 'LOPES', 'LOPPY', 'LORAL', 'LORAN', 'LORDS', 'LORES', 'LORRY', 'LOSEL', 'LOSES', 'LOSSY', 'LOTAH', 'LOTAS', 'LOTIC', 'LOTOS', 'LOTTE', 'LOTTO', 'LOTUS', 'LOUGH', 'LOUIE', 'LOUIS', 'LOUMA', 'LOUPE', 'LOUPS', 'LOURS', 'LOURY', 'LOUTS', 'LOVAT', 'LOVED', 'LOVES', 'LOWED', 'LOWES', 'LOWSE', 'LOXED', 'LOXES', 'LUAUS', 'LUBED', 'LUBES', 'LUCES', 'LUCKS', 'LUCRE', 'LUDES', 'LUDIC', 'LUFFA', 'LUFFS', 'LUGED', 'LUGER', 'LUGES', 'LULLS', 'LULUS', 'LUMAS', 'LUMEN', 'LUMPS', 'LUNAS', 'LUNES', 'LUNET', 'LUNGI', 'LUNGS', 'LUNKS', 'LUNTS', 'LUPIN', 'LUPUS', 'LURCH', 'LURED', 'LURER', 'LURES', 'LUREX', 'LURKS', 'LUSTS', 'LUSUS', 'LUTEA', 'LUTED', 'LUTES', 'LUXES', 'LWEIS', 'LYARD', 'LYART', 'LYASE', 'LYCEA', 'LYCEE', 'LYCRA', 'LYMPH', 'LYNCH', 'LYRES', 'LYRIC', 'LYSED', 'LYSES', 'LYSIN', 'LYSIS', 'LYSSA', 'LYTIC', 'LYTTA']],
+  ['M', ['MAARS', 'MABES', 'MACED', 'MACER', 'MACES', 'MACHE', 'MACHS', 'MACKS', 'MACLE', 'MACON', 'MACRO', 'MADRE', 'MAFIA', 'MAFIC', 'MAGES', 'MAGOT', 'MAGUS', 'MAHOE', 'MAIDS', 'MAILE', 'MAILL', 'MAILS', 'MAIMS', 'MAINS', 'MAIRS', 'MAIST', 'MAKAR', 'MAKES', 'MAKOS', 'MALAR', 'MALES', 'MALIC', 'MALLS', 'MALMS', 'MALMY', 'MALTS', 'MALTY', 'MAMAS', 'MAMBA', 'MAMEY', 'MAMIE', 'MAMMA', 'MAMMY', 'MANAS', 'MANAT', 'MANED', 'MANES', 'MANGE', 'MANGY', 'MANNA', 'MANOS', 'MANSE', 'MANTA', 'MANUS', 'MAQUI', 'MARAS', 'MARCS', 'MARES', 'MARGE', 'MARIA', 'MARKA', 'MARKS', 'MARLS', 'MARLY', 'MARSE', 'MARTS', 'MARVY', 'MASAS', 'MASER', 'MASHY', 'MASKS', 'MASSA', 'MASSY', 'MASTS', 'MATED', 'MATER', 'MATES', 'MATHS', 'MATIN', 'MATTS', 'MATZA', 'MATZO', 'MAUDS', 'MAULS', 'MAUND', 'MAUTS', 'MAVEN', 'MAVIE', 'MAVIN', 'MAVIS', 'MAWED', 'MAXED', 'MAXES', 'MAXIS', 'MAYAN', 'MAYAS', 'MAYED', 'MAYOS', 'MAYST', 'MAZED', 'MAZER', 'MAZES', 'MBIRA', 'MEADS', 'MEALS', 'MEANS', 'MEANY', 'MEATS', 'MEATY', 'MECCA', 'MEDII', 'MEEDS', 'MEETS', 'MEINY', 'MELDS', 'MELEE', 'MELIC', 'MELLS', 'MELTS', 'MELTY', 'MEMES', 'MEMOS', 'MENAD', 'MENDS', 'MENSA', 'MENSE', 'MENSH', 'MENTA', 'MENUS', 'MEOUS', 'MEOWS', 'MERCH', 'MERCS', 'MERDE', 'MERER', 'MERES', 'MERKS', 'MERLE', 'MERLS', 'MESAS', 'MESHY', 'MESIC', 'MESNE', 'MESON', 'MESSY', 'METED', 'METES', 'METHS', 'METIS', 'METOL', 'METRE', 'MEWED', 'MEWLS', 'MEZES', 'MEZZO', 'MIAOU', 'MIAOW', 'MIASM', 'MIAUL', 'MICAS', 'MICHE', 'MICKS', 'MICRA', 'MIDDY', 'MIDIS', 'MIENS', 'MIFFS', 'MIFFY', 'MIGGS', 'MIKED', 'MIKES', 'MIKRA', 'MILCH', 'MILDS', 'MILER', 'MILES', 'MILIA', 'MILKS', 'MILKY', 'MILLE', 'MILLS', 'MILOS', 'MILPA', 'MILTS', 'MILTY', 'MIMED', 'MIMEO', 'MIMER', 'MIMES', 'MINAE', 'MINAS', 'MINCY', 'MINDS', 'MINED', 'MINES', 'MINGY', 'MINIM', 'MINIS', 'MINKE', 'MINKS', 'MINNY', 'MINOR', 'MINTS', 'MIRED', 'MIRES', 'MIREX', 'MIRID', 'MIRIN', 'MIRKS', 'MIRKY', 'MIRZA', 'MISDO', 'MISES', 'MISOS', 'MISSY', 'MISTS', 'MISTY', 'MITER', 'MITES', 'MITIS', 'MITRE', 'MITTS', 'MIXED', 'MIXER', 'MIXES', 'MIXUP', 'MIZEN', 'MOATS', 'MOCHA', 'MOCKS', 'MODES', 'MODUS', 'MOGGY', 'MOHEL', 'MOHUR', 'MOILS', 'MOIRA', 'MOIRE', 'MOJOS', 'MOKES', 'MOLAL', 'MOLAS', 'MOLDS', 'MOLES', 'MOLLS', 'MOLLY', 'MOLTO', 'MOLTS', 'MOMES', 'MOMMA', 'MOMUS', 'MONAD', 'MONAS', 'MONDE', 'MONDO', 'MONGO', 'MONIE', 'MONKS', 'MONOS', 'MONTE', 'MOODS', 'MOODY', 'MOOED', 'MOOLA', 'MOOLS', 'MOONS', 'MOONY', 'MOORS', 'MOORY', 'MOOTS', 'MOPED', 'MOPER', 'MOPES', 'MOPEY', 'MORAE', 'MORAS', 'MORAY', 'MOREL', 'MORES', 'MORNS', 'MORON', 'MORPH', 'MORRO', 'MORSE', 'MORTS', 'MOSEY', 'MOSKS', 'MOSSO', 'MOSTE', 'MOSTS', 'MOTES', 'MOTET', 'MOTEY', 'MOTHS', 'MOTHY', 'MOTIF', 'MOTTE', 'MOTTS', 'MOUCH', 'MOUES', 'MOULD', 'MOUND', 'MOUSY', 'MOVED', 'MOVES', 'MOWED', 'MOWER', 'MOXAS', 'MOXIE', 'MOZOS', 'MUCHO', 'MUCID', 'MUCIN', 'MUCKS', 'MUCOR', 'MUCRO', 'MUCUS', 'MUDDY', 'MUDRA', 'MUFFS', 'MUFTI', 'MUGGS', 'MUHLY', 'MUJIK', 'MULCT', 'MULED', 'MULES', 'MULEY', 'MULLA', 'MULLS', 'MULTI', 'MUMMS', 'MUMPS', 'MUMUS', 'MUNGO', 'MUNIS', 'MUONS', 'MURAS', 'MURED', 'MURES', 'MUREX', 'MURID', 'MURKS', 'MURKY', 'MURRA', 'MURRE', 'MURRS', 'MURRY', 'MUSCA', 'MUSED', 'MUSER', 'MUSES', 'MUSKS', 'MUSKY', 'MUSSY', 'MUSTH', 'MUSTS', 'MUTCH', 'MUTED', 'MUTER', 'MUTES', 'MUTON', 'MUTTS', 'MUZZY', 'MYLAR', 'MYNAH', 'MYNAS', 'MYOID', 'MYOMA', 'MYOPE', 'MYOPY', 'MYSID', 'MYTHS', 'MYTHY']],
+  ['N', ['NAANS', 'NABES', 'NABIS', 'NABOB', 'NACHO', 'NACRE', 'NADAS', 'NAEVI', 'NAFFS', 'NAGGY', 'NAIAD', 'NAIFS', 'NAILS', 'NAIRA', 'NAIRU', 'NAKFA', 'NALAS', 'NALED', 'NAMED', 'NAMER', 'NAMES', 'NANAS', 'NANCE', 'NANCY', 'NAPAS', 'NAPES', 'NAPPA', 'NAPPE', 'NAPPY', 'NARCO', 'NARCS', 'NARDS', 'NARES', 'NARIC', 'NARIS', 'NARKS', 'NARKY', 'NATCH', 'NATES', 'NATTY', 'NAVAR', 'NAVES', 'NAVVY', 'NAWAB', 'NEAPS', 'NEARS', 'NEATH', 'NEATS', 'NECKS', 'NEDDY', 'NEEDS', 'NEEMS', 'NEEPS', 'NEGUS', 'NEIFS', 'NEIST', 'NELLY', 'NEMAS', 'NENES', 'NEONS', 'NERDS', 'NEROL', 'NERTS', 'NERTZ', 'NESTS', 'NESTY', 'NETOP', 'NETTS', 'NETTY', 'NEUKS', 'NEUME', 'NEUMS', 'NEVES', 'NEVUS', 'NEWEL', 'NEWER', 'NEWIE', 'NEWSY', 'NEWTS', 'NEXUS', 'NGWEE', 'NICAD', 'NICKS', 'NICOL', 'NIDAL', 'NIDED', 'NIDES', 'NIDUS', 'NIEVE', 'NIFTY', 'NIGHS', 'NIHIL', 'NILLS', 'NIMBI', 'NINES', 'NINNY', 'NINON', 'NIPAS', 'NIPPY', 'NISEI', 'NISUS', 'NITER', 'NITES', 'NITID', 'NITON', 'NITRE', 'NITRO', 'NITTY', 'NIVAL', 'NIXED', 'NIXES', 'NIXIE', 'NIZAM', 'NOBBY', 'NOBLY', 'NOCKS', 'NODAL', 'NODDY', 'NODES', 'NODUS', 'NOELS', 'NOGGS', 'NOHOW', 'NOILS', 'NOILY', 'NOIRS', 'NOLOS', 'NOMAS', 'NOMEN', 'NOMES', 'NOMOI', 'NOMOS', 'NONAS', 'NONCE', 'NONES', 'NONET', 'NONYL', 'NOOKS', 'NOOKY', 'NOONS', 'NOOSE', 'NOPAL', 'NORIA', 'NORIS', 'NORMS', 'NOSED', 'NOSES', 'NOSEY', 'NOTAL', 'NOTCH', 'NOTED', 'NOTER', 'NOTES', 'NOTUM', 'NOUNS', 'NOVAE', 'NOVAS', 'NOWAY', 'NOWTS', 'NUBBY', 'NUBIA', 'NUCHA', 'NUDER', 'NUDES', 'NUDIE', 'NUDZH', 'NUKED', 'NUKES', 'NULLS', 'NUMBS', 'NUMEN', 'NURDS', 'NURLS', 'NUTSY', 'NUTTY', 'NYALA']],
+  ['O', ['OAKEN', 'OAKUM', 'OARED', 'OASES', 'OASTS', 'OATEN', 'OATER', 'OATHS', 'OAVES', 'OBEAH', 'OBELI', 'OBESE', 'OBEYS', 'OBIAS', 'OBITS', 'OBJET', 'OBOES', 'OBOLE', 'OBOLI', 'OBOLS', 'OCHER', 'OCHRE', 'OCHRY', 'OCKER', 'OCREA', 'OCTAD', 'OCTAL', 'OCTAN', 'OCTYL', 'OCULI', 'ODAHS', 'ODDER', 'ODEON', 'ODEUM', 'ODIST', 'ODIUM', 'ODORS', 'ODOUR', 'ODYLE', 'ODYLS', 'OFAYS', 'OFFED', 'OFTER', 'OGAMS', 'OGEES', 'OGHAM', 'OGIVE', 'OGLED', 'OGLER', 'OGLES', 'OGRES', 'OHIAS', 'OHING', 'OHMIC', 'OIDIA', 'OILED', 'OILER', 'OINKS', 'OKAPI', 'OKAYS', 'OKEHS', 'OKRAS', 'OLDEN', 'OLDIE', 'OLEIC', 'OLEIN', 'OLEOS', 'OLEUM', 'OLIOS', 'OLLAS', 'OLOGY', 'OMASA', 'OMBER', 'OMBRE', 'OMENS', 'OMERS', 'OMITS', 'ONCET', 'ONERY', 'ONIUM', 'ONLAY', 'ONTIC', 'OOHED', 'OORIE', 'OOTID', 'OOZED', 'OOZES', 'OPAHS', 'OPALS', 'OPENS', 'OPING', 'OPIUM', 'OPSIN', 'OPTED', 'OPTIC', 'ORACH', 'ORALS', 'ORANG', 'ORATE', 'ORBED', 'ORBIT', 'ORCAS', 'ORCIN', 'ORDOS', 'OREAD', 'ORGIC', 'ORIBI', 'ORIEL', 'ORLES', 'ORLON', 'ORLOP', 'ORMER', 'ORNIS', 'ORPIN', 'ORRIS', 'ORTHO', 'ORZOS', 'OSIER', 'OSMIC', 'OSMOL', 'OSSIA', 'OSTIA', 'OTTAR', 'OTTOS', 'OUPHE', 'OUPHS', 'OURIE', 'OUSEL', 'OUSTS', 'OUTBY', 'OUTED', 'OUTGO', 'OUTRE', 'OUZEL', 'OUZOS', 'OVALS', 'OVARY', 'OVATE', 'OVENS', 'OVERS', 'OVINE', 'OVOID', 'OVOLI', 'OVOLO', 'OVULE', 'OWING', 'OWLET', 'OWNED', 'OWSEN', 'OXBOW', 'OXEYE', 'OXIDS', 'OXIME', 'OXIMS', 'OXLIP', 'OXTER', 'OYERS']],
+  ['P', ['PACAS', 'PACED', 'PACER', 'PACES', 'PACEY', 'PACHA', 'PACKS', 'PACTS', 'PADDY', 'PADIS', 'PADLE', 'PADRE', 'PADRI', 'PAEAN', 'PAEON', 'PAGAN', 'PAGED', 'PAGER', 'PAGES', 'PAGOD', 'PAIKS', 'PAILS', 'PAINS', 'PAIRS', 'PAISA', 'PAISE', 'PALEA', 'PALED', 'PALER', 'PALES', 'PALET', 'PALLS', 'PALLY', 'PALMS', 'PALMY', 'PALPI', 'PALPS', 'PALSY', 'PAMPA', 'PANDA', 'PANDY', 'PANED', 'PANES', 'PANGA', 'PANGS', 'PANNE', 'PANSY', 'PANTO', 'PANTS', 'PANTY', 'PAPAS', 'PAPAW', 'PAPPI', 'PAPPY', 'PARAE', 'PARAS', 'PARCH', 'PARDI', 'PARDS', 'PARDY', 'PARED', 'PAREO', 'PARES', 'PAREU', 'PARGE', 'PARGO', 'PARIS', 'PARKS', 'PARLE', 'PAROL', 'PARRS', 'PARSE', 'PARTS', 'PARVE', 'PARVO', 'PASEO', 'PASES', 'PASHA', 'PASSE', 'PASTE', 'PASTS', 'PASTY', 'PATED', 'PATEN', 'PATER', 'PATES', 'PATHS', 'PATIN', 'PATLY', 'PAVAN', 'PAVED', 'PAVER', 'PAVES', 'PAVID', 'PAVIN', 'PAVIS', 'PAWED', 'PAWER', 'PAWKY', 'PAWLS', 'PAWNS', 'PAXES', 'PAYED', 'PAYEE', 'PAYER', 'PAYOR', 'PEAGE', 'PEAGS', 'PEAKS', 'PEAKY', 'PEALS', 'PEANS', 'PEARS', 'PEART', 'PEASE', 'PEATS', 'PEATY', 'PEAVY', 'PECHS', 'PECKS', 'PECKY', 'PEDES', 'PEDRO', 'PEEKS', 'PEELS', 'PEENS', 'PEEPS', 'PEERS', 'PEERY', 'PEEVE', 'PEINS', 'PEISE', 'PEKAN', 'PEKES', 'PEKIN', 'PEKOE', 'PELES', 'PELFS', 'PELON', 'PELTS', 'PENAL', 'PENCE', 'PENDS', 'PENES', 'PENGO', 'PENNA', 'PENNI', 'PENNY', 'PEONS', 'PEONY', 'PEPLA', 'PEPOS', 'PEPPY', 'PERDU', 'PERDY', 'PEREA', 'PERES', 'PERIS', 'PERKS', 'PERMS', 'PERPS', 'PERRY', 'PERSE', 'PERVS', 'PESOS', 'PESTO', 'PESTS', 'PESTY', 'PETER', 'PETIT', 'PETTI', 'PETTO', 'PEWEE', 'PEWIT', 'PHAGE', 'PHIAL', 'PHLOX', 'PHONO', 'PHONS', 'PHOTS', 'PHPHT', 'PHUTS', 'PHYLA', 'PHYLE', 'PIANS', 'PIBAL', 'PICAL', 'PICAS', 'PICKS', 'PICOT', 'PICUL', 'PIERS', 'PIETA', 'PIGGY', 'PIGMY', 'PIING', 'PIKAS', 'PIKED', 'PIKER', 'PIKES', 'PIKIS', 'PILAF', 'PILAR', 'PILAU', 'PILAW', 'PILEA', 'PILED', 'PILEI', 'PILES', 'PILIS', 'PILLS', 'PILUS', 'PIMAS', 'PIMPS', 'PINAS', 'PINED', 'PINES', 'PINGO', 'PINGS', 'PINKO', 'PINKS', 'PINNA', 'PINNY', 'PINON', 'PINOT', 'PINTA', 'PINTS', 'PINUP', 'PIONS', 'PIPAL', 'PIPED', 'PIPES', 'PIPET', 'PIPIT', 'PIRNS', 'PIROG', 'PISCO', 'PISOS', 'PISTE', 'PITAS', 'PITHS', 'PITON', 'PITTA', 'PIVOT', 'PIXES', 'PIZZA', 'PLACK', 'PLAGE', 'PLANS', 'PLASH', 'PLASM', 'PLATS', 'PLATY', 'PLAYA', 'PLAYS', 'PLEAS', 'PLEBE', 'PLEBS', 'PLENA', 'PLEON', 'PLEWS', 'PLICA', 'PLIED', 'PLIER', 'PLIES', 'PLINK', 'PLODS', 'PLONK', 'PLOPS', 'PLOTS', 'PLOTZ', 'PLOWS', 'PLOYS', 'PLUGS', 'PLUMS', 'PLUMY', 'PLUSH', 'PLYER', 'POACH', 'POBOY', 'POCKS', 'POCKY', 'PODGY', 'PODIA', 'POEMS', 'POESY', 'POETS', 'POGEY', 'POILU', 'POIND', 'POKED', 'POKES', 'POKEY', 'POLED', 'POLER', 'POLES', 'POLIO', 'POLIS', 'POLLS', 'POLOS', 'POLYS', 'POMES', 'POMMY', 'POMOS', 'POMPS', 'PONCE', 'PONDS', 'PONES', 'PONGS', 'POOCH', 'POODS', 'POOED', 'POOFS', 'POOFY', 'POOHS', 'POOLS', 'POONS', 'POOPS', 'POORI', 'POOTS', 'POOVE', 'POPES', 'POPPA', 'POPSY', 'PORED', 'PORES', 'PORGY', 'PORKS', 'PORKY', 'PORNS', 'PORNY', 'PORTS', 'POSED', 'POSER', 'POSES', 'POSIT', 'POSTS', 'POTSY', 'POTTO', 'POTTY', 'POUCH', 'POUFF', 'POUFS', 'POULT', 'POURS', 'POUTS', 'POXED', 'POXES', 'POYOU', 'PRAAM', 'PRAHU', 'PRAMS', 'PRANG', 'PRAOS', 'PRASE', 'PRATE', 'PRATS', 'PRAUS', 'PRAWN', 'PRAYS', 'PREED', 'PREES', 'PREOP', 'PREPS', 'PRESA', 'PRESE', 'PREST', 'PREXY', 'PREYS', 'PRICY', 'PRIED', 'PRIER', 'PRIES', 'PRIGS', 'PRILL', 'PRIMA', 'PRIMI', 'PRIMS', 'PRINK', 'PRION', 'PRISE', 'PRISS', 'PRIVY', 'PROAS', 'PRODS', 'PROEM', 'PROFS', 'PROGS', 'PROLE', 'PROMO', 'PROMS', 'PROPS', 'PROSO', 'PROSS', 'PROST', 'PROSY', 'PROWS', 'PRUTA', 'PRYER', 'PSEUD', 'PSHAW', 'PSOAE', 'PSOAI', 'PSOAS', 'PSYCH', 'PUBES', 'PUBIC', 'PUBIS', 'PUCES', 'PUCKA', 'PUCKS', 'PUDGE', 'PUDGY', 'PUDIC', 'PUFFS', 'PUGGY', 'PUJAH', 'PUJAS', 'PUKED', 'PUKES', 'PUKKA', 'PULED', 'PULER', 'PULES', 'PULIK', 'PULIS', 'PULLS', 'PULPS', 'PULSE', 'PUMAS', 'PUMPS', 'PUNAS', 'PUNCH', 'PUNGS', 'PUNJI', 'PUNKA', 'PUNKS', 'PUNKY', 'PUNNY', 'PUNTO', 'PUNTS', 'PUNTY', 'PUPAE', 'PUPAL', 'PUPAS', 'PUPPY', 'PUPUS', 'PURDA', 'PUREE', 'PURER', 'PURIN', 'PURIS', 'PURLS', 'PURRS', 'PURSE', 'PURSY', 'PURTY', 'PUSES', 'PUSHY', 'PUTON', 'PUTTI', 'PUTTO', 'PUTTS', 'PUTTY', 'PYGMY', 'PYINS', 'PYLON', 'PYOID', 'PYRAN', 'PYRES', 'PYREX', 'PYRIC', 'PYROS', 'PYXES', 'PYXIE', 'PYXIS']],
+  ['Q', ['QADIS', 'QAIDS', 'QANAT', 'QOPHS', 'QUADS', 'QUAFF', 'QUAGS', 'QUAIS', 'QUAKY', 'QUALE', 'QUANT', 'QUARE', 'QUASI', 'QUASS', 'QUATE', 'QUAYS', 'QUBIT', 'QUEAN', 'QUEER', 'QUELL', 'QUERN', 'QUEYS', 'QUIDS', 'QUIFF', 'QUINS', 'QUINT', 'QUIPS', 'QUIPU', 'QUIRE', 'QUIRT', 'QUITS', 'QUODS', 'QUOIN', 'QUOIT', 'QUOLL', 'QUOTH', 'QURSH']],
+  ['R', ['RABAT', 'RABBI', 'RABIC', 'RACED', 'RACES', 'RACKS', 'RACON', 'RADAR', 'RADII', 'RADIX', 'RADON', 'RAFFS', 'RAFTS', 'RAGAS', 'RAGED', 'RAGEE', 'RAGES', 'RAGGS', 'RAGGY', 'RAGIS', 'RAIAS', 'RAIDS', 'RAILS', 'RAINS', 'RAITA', 'RAJAH', 'RAJAS', 'RAJES', 'RAKED', 'RAKEE', 'RAKER', 'RAKES', 'RAKIS', 'RAKUS', 'RALES', 'RALLY', 'RALPH', 'RAMAL', 'RAMEE', 'RAMET', 'RAMIE', 'RAMMY', 'RAMPS', 'RAMUS', 'RANCE', 'RANDS', 'RANDY', 'RANEE', 'RANGY', 'RANID', 'RANIS', 'RANKS', 'RANTS', 'RAPED', 'RAPER', 'RAPES', 'RAPHE', 'RARED', 'RARER', 'RARES', 'RASED', 'RASER', 'RASES', 'RASPS', 'RASPY', 'RATAL', 'RATAN', 'RATCH', 'RATED', 'RATEL', 'RATER', 'RATES', 'RATHE', 'RATOS', 'RAVED', 'RAVEL', 'RAVEN', 'RAVER', 'RAVES', 'RAVIN', 'RAWER', 'RAWIN', 'RAWLY', 'RAXED', 'RAXES', 'RAYAH', 'RAYAS', 'RAYED', 'RAZED', 'RAZEE', 'RAZER', 'RAZES', 'RAZOR', 'READD', 'READS', 'REALS', 'REAMS', 'REAPS', 'REARM', 'REARS', 'REATA', 'REAVE', 'REBAR', 'REBBE', 'REBEC', 'REBID', 'REBOP', 'REBUY', 'RECCE', 'RECIT', 'RECKS', 'RECON', 'RECTA', 'RECTI', 'RECTO', 'RECUT', 'REDAN', 'REDDS', 'REDED', 'REDES', 'REDIA', 'REDID', 'REDIP', 'REDLY', 'REDON', 'REDOS', 'REDOX', 'REDRY', 'REDUB', 'REDUX', 'REDYE', 'REEDS', 'REEDY', 'REEFS', 'REEFY', 'REEKS', 'REEKY', 'REELS', 'REEST', 'REEVE', 'REFED', 'REFEL', 'REFIT', 'REFIX', 'REFLY', 'REFRY', 'REGES', 'REGMA', 'REGNA', 'REHEM', 'REIFS', 'REIFY', 'REIGN', 'REINK', 'REINS', 'REIVE', 'REJIG', 'REKEY', 'RELET', 'RELIT', 'REMAN', 'REMAP', 'REMET', 'REMEX', 'REMIX', 'RENAL', 'RENDS', 'RENIG', 'RENIN', 'RENTE', 'RENTS', 'REOIL', 'REPEG', 'REPIN', 'REPLY', 'REPOS', 'REPOT', 'REPPS', 'REPRO', 'RERAN', 'RERIG', 'RESAT', 'RESAW', 'RESAY', 'RESEE', 'RESET', 'RESEW', 'RESID', 'RESIT', 'RESOD', 'RESOW', 'RESTS', 'RETAG', 'RETAX', 'RETEM', 'RETIA', 'RETIE', 'REVET', 'REWAN', 'REWAX', 'REWED', 'REWET', 'REWIN', 'REWON', 'REXES', 'RHEAS', 'RHEME', 'RHEUM', 'RHOMB', 'RHUMB', 'RHYTA', 'RIALS', 'RIANT', 'RIATA', 'RIBBY', 'RIBES', 'RICED', 'RICER', 'RICES', 'RICIN', 'RICKS', 'RIDES', 'RIDGY', 'RIELS', 'RIFER', 'RIFFS', 'RIFLE', 'RIFTS', 'RIGOR', 'RILED', 'RILES', 'RILEY', 'RILLE', 'RILLS', 'RIMED', 'RIMER', 'RIMES', 'RINDS', 'RINDY', 'RINGS', 'RINKS', 'RINSE', 'RIOJA', 'RIOTS', 'RIPED', 'RIPEN', 'RIPES', 'RISES', 'RISHI', 'RISKS', 'RISKY', 'RISUS', 'RITES', 'RITZY', 'RIVED', 'RIVEN', 'RIVER', 'RIVES', 'RIYAL', 'ROADS', 'ROAMS', 'ROANS', 'ROARS', 'ROAST', 'ROBED', 'ROBES', 'ROBLE', 'ROCKS', 'RODES', 'ROGER', 'ROILS', 'ROILY', 'ROLES', 'ROLFS', 'ROLLS', 'ROMAN', 'ROMEO', 'ROMPS', 'RONDO', 'ROODS', 'ROOFS', 'ROOKS', 'ROOKY', 'ROOMS', 'ROOSE', 'ROOTS', 'ROOTY', 'ROPED', 'ROPER', 'ROPES', 'ROPEY', 'ROQUE', 'ROSED', 'ROSES', 'ROSET', 'ROSHI', 'ROSIN', 'ROTAS', 'ROTCH', 'ROTES', 'ROTIS', 'ROTLS', 'ROTOR', 'ROTOS', 'ROTTE', 'ROUEN', 'ROUES', 'ROUPS', 'ROUPY', 'ROUST', 'ROUTH', 'ROUTS', 'ROVED', 'ROVEN', 'ROVES', 'ROWAN', 'ROWED', 'ROWEL', 'ROWEN', 'ROWTH', 'RUANA', 'RUBBY', 'RUBEL', 'RUBES', 'RUBLE', 'RUBUS', 'RUCHE', 'RUCKS', 'RUDDS', 'RUERS', 'RUFFE', 'RUFFS', 'RUGAE', 'RUGAL', 'RUING', 'RUINS', 'RULED', 'RULER', 'RULES', 'RUMEN', 'RUMMY', 'RUMOR', 'RUMPS', 'RUNES', 'RUNGS', 'RUNIC', 'RUNNY', 'RUNTS', 'RUNTY', 'RUSES', 'RUSHY', 'RUSKS', 'RUSTS', 'RUTHS', 'RUTIN', 'RUTTY', 'RYKED', 'RYKES', 'RYNDS', 'RYOTS']],
+  ['S', ['SABAL', 'SABED', 'SABER', 'SABES', 'SABIN', 'SABIR', 'SABLE', 'SABOT', 'SABRA', 'SABRE', 'SACKS', 'SACRA', 'SADES', 'SADHE', 'SADHU', 'SADIS', 'SADLY', 'SAFER', 'SAFES', 'SAGAS', 'SAGER', 'SAGES', 'SAGGY', 'SAGOS', 'SAGUM', 'SAHIB', 'SAICE', 'SAIDS', 'SAIGA', 'SAILS', 'SAINS', 'SAITH', 'SAJOU', 'SAKER', 'SAKES', 'SAKIS', 'SALAL', 'SALEP', 'SALES', 'SALIC', 'SALMI', 'SALOL', 'SALON', 'SALPA', 'SALPS', 'SALTS', 'SALVE', 'SALVO', 'SAMBA', 'SAMBO', 'SAMEK', 'SAMPS', 'SANDS', 'SANED', 'SANER', 'SANES', 'SANGA', 'SANGH', 'SANTO', 'SAPID', 'SAPOR', 'SAPPY', 'SARAN', 'SARDS', 'SAREE', 'SARGE', 'SARGO', 'SARIN', 'SARIS', 'SARKS', 'SARKY', 'SAROD', 'SAROS', 'SASIN', 'SATAY', 'SATED', 'SATEM', 'SATES', 'SATIS', 'SATYR', 'SAUCE', 'SAUCH', 'SAUGH', 'SAULS', 'SAULT', 'SAURY', 'SAVED', 'SAVER', 'SAVES', 'SAVIN', 'SAVOY', 'SAWED', 'SAWER', 'SAXES', 'SAYED', 'SAYER', 'SAYID', 'SAYST', 'SCABS', 'SCADS', 'SCAGS', 'SCALL', 'SCALP', 'SCALY', 'SCAMP', 'SCAMS', 'SCANS', 'SCAPE', 'SCARP', 'SCARS', 'SCART', 'SCARY', 'SCATS', 'SCATT', 'SCAUP', 'SCAUR', 'SCENA', 'SCEND', 'SCHAV', 'SCHMO', 'SCHUL', 'SCHWA', 'SCION', 'SCOOP', 'SCOOT', 'SCOPS', 'SCOTS', 'SCOWS', 'SCRAG', 'SCREE', 'SCREW', 'SCRIM', 'SCRIP', 'SCROD', 'SCUBA', 'SCUDI', 'SCUDO', 'SCUDS', 'SCUFF', 'SCULK', 'SCULL', 'SCULP', 'SCUMS', 'SCUPS', 'SCURF', 'SCUTA', 'SCUTE', 'SCUTS', 'SCUZZ', 'SEALS', 'SEAMS', 'SEAMY', 'SEARS', 'SEATS', 'SEBUM', 'SECCO', 'SECTS', 'SEDER', 'SEDGE', 'SEDGY', 'SEDUM', 'SEEDS', 'SEEKS', 'SEELS', 'SEELY', 'SEEMS', 'SEEPS', 'SEEPY', 'SEERS', 'SEGNI', 'SEGNO', 'SEGOS', 'SEIFS', 'SEINE', 'SEISE', 'SEISM', 'SEIZE', 'SELAH', 'SELFS', 'SELLE', 'SELLS', 'SELVA', 'SEMES', 'SEMIS', 'SENDS', 'SENGI', 'SENNA', 'SENOR', 'SENSA', 'SENTE', 'SENTI', 'SEPAL', 'SEPIA', 'SEPIC', 'SEPOY', 'SEPTA', 'SEPTS', 'SERAC', 'SERAI', 'SERAL', 'SERED', 'SERER', 'SERES', 'SERFS', 'SERGE', 'SERIN', 'SEROW', 'SERRY', 'SERVO', 'SETAE', 'SETAL', 'SETON', 'SETTS', 'SETUP', 'SEWAN', 'SEWAR', 'SEWED', 'SEWER', 'SEXED', 'SEXES', 'SEXTO', 'SEXTS', 'SHACK', 'SHADS', 'SHADY', 'SHAGS', 'SHAHS', 'SHAKO', 'SHALE', 'SHALT', 'SHALY', 'SHAMS', 'SHARK', 'SHARN', 'SHAUL', 'SHAWM', 'SHAWN', 'SHAWS', 'SHAYS', 'SHEAF', 'SHEAL', 'SHEAS', 'SHEDS', 'SHEEN', 'SHEER', 'SHEIK', 'SHEND', 'SHENT', 'SHEOL', 'SHERD', 'SHEWN', 'SHEWS', 'SHIED', 'SHIEL', 'SHIER', 'SHIES', 'SHILL', 'SHILY', 'SHIMS', 'SHINS', 'SHINY', 'SHIPS', 'SHIRR', 'SHIRT', 'SHIST', 'SHIVA', 'SHIVE', 'SHIVS', 'SHLEP', 'SHLUB', 'SHOAT', 'SHOCK', 'SHOED', 'SHOER', 'SHOES', 'SHOGI', 'SHOGS', 'SHOJI', 'SHONE', 'SHOOK', 'SHOOL', 'SHOON', 'SHOOS', 'SHOOT', 'SHOPS', 'SHORL', 'SHOTE', 'SHOTS', 'SHOTT', 'SHOWS', 'SHOYU', 'SHREW', 'SHRIS', 'SHTIK', 'SHULN', 'SHULS', 'SHUNS', 'SHUTE', 'SHUTS', 'SHWAS', 'SHYER', 'SIALS', 'SIBBS', 'SIBYL', 'SICES', 'SICKO', 'SICKS', 'SIDED', 'SIDES', 'SIDHE', 'SIEUR', 'SIEVE', 'SIFTS', 'SIGHS', 'SIGIL', 'SIGLA', 'SIGMA', 'SIGNA', 'SIGNS', 'SIKAS', 'SIKER', 'SIKES', 'SILDS', 'SILEX', 'SILKS', 'SILKY', 'SILLS', 'SILOS', 'SILTS', 'SILTY', 'SILVA', 'SIMAR', 'SIMAS', 'SIMPS', 'SINES', 'SINEW', 'SINGS', 'SINHS', 'SINKS', 'SINUS', 'SIPED', 'SIPES', 'SIRED', 'SIREE', 'SIRES', 'SIRRA', 'SIRUP', 'SISAL', 'SISES', 'SITED', 'SITES', 'SITUP', 'SITUS', 'SIVER', 'SIXES', 'SIXMO', 'SIXTE', 'SIXTY', 'SIZAR', 'SIZED', 'SIZER', 'SIZES', 'SKAGS', 'SKALD', 'SKATS', 'SKEAN', 'SKEED', 'SKEEN', 'SKEES', 'SKEET', 'SKEGS', 'SKEIN', 'SKELL', 'SKELM', 'SKELP', 'SKENE', 'SKEPS', 'SKEWS', 'SKIDS', 'SKIED', 'SKIES', 'SKIEY', 'SKIMO', 'SKIMS', 'SKINK', 'SKINS', 'SKINT', 'SKIPS', 'SKIRL', 'SKIRR', 'SKITE', 'SKITS', 'SKIVE', 'SKOAL', 'SKORT', 'SKOSH', 'SKUAS', 'SKULK', 'SKYED', 'SKYEY', 'SLABS', 'SLACK', 'SLAGS', 'SLAIN', 'SLAKE', 'SLAMS', 'SLANK', 'SLANT', 'SLAPS', 'SLASH', 'SLATS', 'SLATY', 'SLAVE', 'SLAWS', 'SLAYS', 'SLEDS', 'SLEET', 'SLEPT', 'SLEWS', 'SLIDE', 'SLIER', 'SLILY', 'SLIMS', 'SLIMY', 'SLING', 'SLINK', 'SLIPE', 'SLIPS', 'SLIPT', 'SLITS', 'SLOBS', 'SLOES', 'SLOGS', 'SLOID', 'SLOJD', 'SLOOP', 'SLOPS', 'SLOTS', 'SLOWS', 'SLOYD', 'SLUBS', 'SLUED', 'SLUES', 'SLUFF', 'SLUGS', 'SLUMS', 'SLUNK', 'SLURB', 'SLURP', 'SLURS', 'SLUSH', 'SLYER', 'SLYLY', 'SLYPE', 'SMACK', 'SMALT', 'SMARM', 'SMAZE', 'SMEEK', 'SMERK', 'SMEWS', 'SMOGS', 'SMOKY', 'SMOLT', 'SMOTE', 'SMUSH', 'SMUTS', 'SNAGS', 'SNAPS', 'SNARF', 'SNARK', 'SNASH', 'SNATH', 'SNAWS', 'SNEAP', 'SNECK', 'SNEDS', 'SNEER', 'SNELL', 'SNIBS', 'SNICK', 'SNIFF', 'SNIPE', 'SNIPS', 'SNITS', 'SNOBS', 'SNOGS', 'SNOOD', 'SNOOK', 'SNOOL', 'SNOOT', 'SNOTS', 'SNOWS', 'SNOWY', 'SNUBS', 'SNUCK', 'SNUFF', 'SNUGS', 'SNYES', 'SOAKS', 'SOAPS', 'SOAPY', 'SOARS', 'SOAVE', 'SOBAS', 'SOCAS', 'SOCKO', 'SOCKS', 'SOCLE', 'SODAS', 'SODDY', 'SODIC', 'SODOM', 'SOFAR', 'SOFAS', 'SOFTA', 'SOFTS', 'SOFTY', 'SOILS', 'SOJAS', 'SOKES', 'SOKOL', 'SOLAN', 'SOLDI', 'SOLDO', 'SOLED', 'SOLEI', 'SOLES', 'SOLON', 'SOLOS', 'SOLUM', 'SOLUS', 'SOMAN', 'SOMAS', 'SONAR', 'SONDE', 'SONES', 'SONGS', 'SONLY', 'SONNY', 'SONSY', 'SOOEY', 'SOOKS', 'SOOTH', 'SOOTS', 'SOOTY', 'SOPHS', 'SOPHY', 'SOPOR', 'SOPPY', 'SORAS', 'SORBS', 'SORDS', 'SORED', 'SOREL', 'SORER', 'SORES', 'SORGO', 'SORNS', 'SORTA', 'SORTS', 'SORUS', 'SOTHS', 'SOTOL', 'SOUGH', 'SOUKS', 'SOULS', 'SOUPS', 'SOUPY', 'SOURS', 'SOUSE', 'SOWAR', 'SOWED', 'SOYAS', 'SOYUZ', 'SOZIN', 'SPACY', 'SPADO', 'SPAED', 'SPAES', 'SPAHI', 'SPAIL', 'SPAIT', 'SPAKE', 'SPALE', 'SPALL', 'SPAMS', 'SPANG', 'SPANK', 'SPANS', 'SPARS', 'SPATS', 'SPAWN', 'SPAYS', 'SPAZZ', 'SPEAN', 'SPECS', 'SPEEL', 'SPEER', 'SPEIL', 'SPEIR', 'SPEWS', 'SPICA', 'SPIED', 'SPIER', 'SPIES', 'SPIFF', 'SPIKY', 'SPILE', 'SPILT', 'SPINS', 'SPIRT', 'SPIRY', 'SPITS', 'SPITZ', 'SPIVS', 'SPLAY', 'SPODE', 'SPOOK', 'SPOOR', 'SPRAG', 'SPRAT', 'SPREE', 'SPRIT', 'SPRUE', 'SPRUG', 'SPUDS', 'SPUED', 'SPUES', 'SPUME', 'SPUMY', 'SPURN', 'SPURS', 'SPUTA', 'SQUAB', 'SQUAW', 'SQUEG', 'SQUIB', 'STABS', 'STADE', 'STAGS', 'STAGY', 'STAIG', 'STALK', 'STANE', 'STANG', 'STAPH', 'STARS', 'STATS', 'STAVE', 'STAYS', 'STEAK', 'STEAL', 'STEEK', 'STEER', 'STELA', 'STELE', 'STEMS', 'STENO', 'STENT', 'STEPS', 'STERE', 'STETS', 'STEWS', 'STEWY', 'STICH', 'STIED', 'STIES', 'STILE', 'STIME', 'STIMY', 'STIPE', 'STIRK', 'STIRP', 'STIRS', 'STOAE', 'STOAI', 'STOAS', 'STOAT', 'STOBS', 'STOGY', 'STOKE', 'STOMA', 'STOOK', 'STOOP', 'STOPE', 'STOPS', 'STOPT', 'STOSS', 'STOTS', 'STOTT', 'STOUP', 'STOUR', 'STOWP', 'STOWS', 'STREP', 'STREW', 'STRIA', 'STRID', 'STRIP', 'STROP', 'STROW', 'STROY', 'STRUM', 'STUBS', 'STUCK', 'STUDS', 'STULL', 'STUMS', 'STUNK', 'STUNS', 'STUPA', 'STUPE', 'STURT', 'STYED', 'STYES', 'STYLI', 'STYMY', 'SUBAH', 'SUBAS', 'SUBER', 'SUCKS', 'SUCKY', 'SUCRE', 'SUDDS', 'SUDOR', 'SUDSY', 'SUERS', 'SUETS', 'SUETY', 'SUGHS', 'SUING', 'SUINT', 'SUITS', 'SULCI', 'SULFA', 'SULFO', 'SULKS', 'SULUS', 'SUMMA', 'SUMOS', 'SUMPS', 'SUNNA', 'SUNNS', 'SUNUP', 'SUPES', 'SUPRA', 'SURAH', 'SURAL', 'SURAS', 'SURDS', 'SURFS', 'SURFY', 'SURGY', 'SURRA', 'SUTRA', 'SUTTA', 'SWABS', 'SWAGE', 'SWAGS', 'SWAIL', 'SWAIN', 'SWALE', 'SWAMI', 'SWAMY', 'SWANG', 'SWANK', 'SWANS', 'SWAPS', 'SWARD', 'SWARE', 'SWARF', 'SWARM', 'SWART', 'SWASH', 'SWATS', 'SWAYS', 'SWEAR', 'SWEDE', 'SWEER', 'SWEPT', 'SWIFT', 'SWIGS', 'SWIMS', 'SWINK', 'SWIPE', 'SWISS', 'SWITH', 'SWIVE', 'SWOBS', 'SWOPS', 'SWORE', 'SWOTS', 'SWOUN', 'SYCEE', 'SYCES', 'SYKES', 'SYLIS', 'SYLPH', 'SYLVA', 'SYNCH', 'SYNCS', 'SYNOD', 'SYNTH', 'SYPHS', 'SYRAH', 'SYREN', 'SYSOP']],
+  ['T', ['TABER', 'TABES', 'TABID', 'TABLA', 'TABOR', 'TABUN', 'TABUS', 'TACES', 'TACET', 'TACHE', 'TACHS', 'TACKS', 'TACOS', 'TACTS', 'TAELS', 'TAFIA', 'TAHRS', 'TAIGA', 'TAILS', 'TAINS', 'TAINT', 'TAJES', 'TAKAS', 'TAKER', 'TAKES', 'TAKIN', 'TALAR', 'TALAS', 'TALCS', 'TALER', 'TALES', 'TALKS', 'TALKY', 'TALLS', 'TALUK', 'TALUS', 'TAMAL', 'TAMED', 'TAMER', 'TAMES', 'TAMIS', 'TAMMY', 'TAMPS', 'TANGA', 'TANGO', 'TANGS', 'TANKA', 'TANKS', 'TANSY', 'TANTO', 'TAPAS', 'TAPED', 'TAPES', 'TAPIS', 'TARDO', 'TARED', 'TARES', 'TARGE', 'TARNS', 'TAROC', 'TAROK', 'TAROS', 'TAROT', 'TARPS', 'TARRE', 'TARRY', 'TARSI', 'TARTS', 'TARTY', 'TASKS', 'TASSE', 'TATAR', 'TATER', 'TATES', 'TATTY', 'TAUON', 'TAUTS', 'TAWED', 'TAWER', 'TAWIE', 'TAWSE', 'TAXED', 'TAXER', 'TAXES', 'TAXIS', 'TAXOL', 'TAXON', 'TAXUS', 'TAZZA', 'TAZZE', 'TEAKS', 'TEALS', 'TEAMS', 'TEARS', 'TEATS', 'TECHS', 'TECHY', 'TECTA', 'TEELS', 'TEEMS', 'TEENS', 'TEENY', 'TEFFS', 'TEGGS', 'TEGUA', 'TEIID', 'TEIND', 'TELAE', 'TELCO', 'TELES', 'TELEX', 'TELIA', 'TELIC', 'TELLS', 'TELLY', 'TELOI', 'TELOS', 'TEMPI', 'TEMPS', 'TEMPT', 'TENCH', 'TENDS', 'TENDU', 'TENET', 'TENGE', 'TENIA', 'TENON', 'TENSE', 'TENTS', 'TENTY', 'TEPAL', 'TEPAS', 'TEPEE', 'TEPOY', 'TERAI', 'TERCE', 'TERGA', 'TERMS', 'TERNE', 'TERNS', 'TERRA', 'TERRY', 'TESLA', 'TESTA', 'TESTS', 'TESTY', 'TETHS', 'TETRA', 'TETRI', 'TEUCH', 'TEUGH', 'TEWED', 'TEXAS', 'TEXTS', 'THACK', 'THANE', 'THARM', 'THAWS', 'THEBE', 'THECA', 'THEGN', 'THEIN', 'THENS', 'THERM', 'THESP', 'THETA', 'THEWS', 'THEWY', 'THILL', 'THINE', 'THINS', 'THIOL', 'THIRL', 'THOLE', 'THONG', 'THORO', 'THORP', 'THOUS', 'THRAW', 'THRIP', 'THROE', 'THUDS', 'THUGS', 'THUJA', 'THUNK', 'THURL', 'THUYA', 'THYMI', 'THYMY', 'TICAL', 'TICKS', 'TIDED', 'TIDES', 'TIERS', 'TIFFS', 'TIGHT', 'TIGON', 'TIKES', 'TIKIS', 'TIKKA', 'TILAK', 'TILED', 'TILER', 'TILES', 'TILLS', 'TILTH', 'TILTS', 'TIMED', 'TIMES', 'TIMID', 'TINCT', 'TINEA', 'TINED', 'TINES', 'TINGS', 'TINNY', 'TINTS', 'TIPIS', 'TIPPY', 'TIRED', 'TIRES', 'TIRLS', 'TIROS', 'TITER', 'TITIS', 'TITRE', 'TITTY', 'TOADS', 'TODDY', 'TOEAS', 'TOFFS', 'TOFFY', 'TOFTS', 'TOFUS', 'TOGAE', 'TOGAS', 'TOGUE', 'TOILE', 'TOILS', 'TOITS', 'TOKAY', 'TOKED', 'TOKEN', 'TOKER', 'TOKES', 'TOLAN', 'TOLAR', 'TOLAS', 'TOLED', 'TOLES', 'TOLLS', 'TOLUS', 'TOLYL', 'TOMAN', 'TOMBS', 'TOMES', 'TOMMY', 'TONAL', 'TONDI', 'TONDO', 'TONED', 'TONER', 'TONES', 'TONEY', 'TONGA', 'TONGS', 'TONNE', 'TONUS', 'TOOLS', 'TOONS', 'TOOTS', 'TOPED', 'TOPEE', 'TOPER', 'TOPES', 'TOPHE', 'TOPHI', 'TOPHS', 'TOPIS', 'TOPOI', 'TOPOS', 'TOQUE', 'TORAH', 'TORAS', 'TORCS', 'TORES', 'TORIC', 'TORII', 'TOROS', 'TOROT', 'TORRS', 'TORSE', 'TORSI', 'TORSK', 'TORTA', 'TORTE', 'TORTS', 'TORUS', 'TOTED', 'TOTER', 'TOTES', 'TOURS', 'TOUSE', 'TOUTS', 'TOWED', 'TOWIE', 'TOWNS', 'TOWNY', 'TOYED', 'TOYER', 'TOYON', 'TOYOS', 'TRAGI', 'TRAIK', 'TRAMP', 'TRAMS', 'TRANK', 'TRANQ', 'TRANS', 'TRAPS', 'TRAPT', 'TRASS', 'TRAVE', 'TRAYS', 'TREAD', 'TREED', 'TREEN', 'TREES', 'TREKS', 'TRESS', 'TRETS', 'TREWS', 'TREYS', 'TRIAC', 'TRIBE', 'TRIED', 'TRIER', 'TRIES', 'TRIGO', 'TRIGS', 'TRIKE', 'TRILL', 'TRIMS', 'TRINE', 'TRIOL', 'TRIOS', 'TRIPS', 'TROAK', 'TROCK', 'TRODE', 'TROGS', 'TROIS', 'TROKE', 'TROMP', 'TRONA', 'TRONE', 'TROOZ', 'TROTH', 'TROTS', 'TROWS', 'TROYS', 'TRUCE', 'TRUED', 'TRUER', 'TRUES', 'TRUGS', 'TRULL', 'TRUMP', 'TRUNK', 'TRYMA', 'TSADE', 'TSADI', 'TSARS', 'TSKED', 'TSUBA', 'TUBAE', 'TUBAL', 'TUBAS', 'TUBBY', 'TUBED', 'TUBES', 'TUCKS', 'TUFAS', 'TUFFS', 'TUFTS', 'TUFTY', 'TULES', 'TULLE', 'TUMID', 'TUMMY', 'TUMOR', 'TUMPS', 'TUNAS', 'TUNED', 'TUNER', 'TUNES', 'TUNGS', 'TUNNY', 'TUPIK', 'TUQUE', 'TURDS', 'TURFS', 'TURFY', 'TURKS', 'TURNS', 'TURPS', 'TUSHY', 'TUSKS', 'TUTEE', 'TUTTI', 'TUTTY', 'TUTUS', 'TUXES', 'TUYER', 'TWAES', 'TWAIN', 'TWATS', 'TWEEN', 'TWERP', 'TWIER', 'TWIGS', 'TWILL', 'TWINS', 'TWINY', 'TWIRP', 'TWITS', 'TWIXT', 'TWYER', 'TYEES', 'TYERS', 'TYING', 'TYIYN', 'TYKES', 'TYNED', 'TYNES', 'TYPAL', 'TYPED', 'TYPES', 'TYPEY', 'TYPIC', 'TYPOS', 'TYPPS', 'TYRED', 'TYRES', 'TYROS', 'TYTHE', 'TZARS']],
+  ['U', ['UDONS', 'UGLIS', 'UHLAN', 'UKASE', 'ULAMA', 'ULANS', 'ULEMA', 'ULNAD', 'ULNAE', 'ULNAR', 'ULNAS', 'ULPAN', 'ULVAS', 'UMAMI', 'UMBEL', 'UMBER', 'UMBOS', 'UMIAC', 'UMIAK', 'UMIAQ', 'UMPED', 'UNAIS', 'UNAPT', 'UNARM', 'UNARY', 'UNAUS', 'UNBAN', 'UNBAR', 'UNBID', 'UNBOX', 'UNCAP', 'UNCIA', 'UNCOS', 'UNCOY', 'UNCUS', 'UNCUT', 'UNDEE', 'UNFIX', 'UNGOT', 'UNHAT', 'UNHIP', 'UNITS', 'UNITY', 'UNJAM', 'UNLAY', 'UNLED', 'UNLET', 'UNMAN', 'UNMEW', 'UNMIX', 'UNPEG', 'UNPEN', 'UNPIN', 'UNRIG', 'UNRIP', 'UNSAY', 'UNSET', 'UNSEW', 'UNSEX', 'UNWED', 'UNWET', 'UNWIT', 'UNWON', 'UPBOW', 'UPBYE', 'UPDOS', 'UPDRY', 'UPEND', 'UPLIT', 'UPPED', 'URAEI', 'URARE', 'URARI', 'URASE', 'URATE', 'URBIA', 'UREAL', 'UREAS', 'UREDO', 'UREIC', 'URGED', 'URGER', 'URGES', 'URIAL', 'URINE', 'URPED', 'URSAE', 'URSID', 'USERS', 'USNEA', 'USQUE', 'USURY', 'UTERI', 'UTILE', 'UVEAL', 'UVEAS']],
+  ['V', ['VACUA', 'VAGAL', 'VAGUS', 'VAILS', 'VAIRS', 'VAKIL', 'VALES', 'VALOR', 'VALSE', 'VALVE', 'VAMPS', 'VAMPY', 'VANDA', 'VANED', 'VANES', 'VANGS', 'VAPOR', 'VARAS', 'VARIA', 'VARIX', 'VARNA', 'VARUS', 'VARVE', 'VASAL', 'VASES', 'VASTS', 'VASTY', 'VATIC', 'VATUS', 'VAUNT', 'VEALS', 'VEALY', 'VEENA', 'VEEPS', 'VEERS', 'VEERY', 'VEGES', 'VEGIE', 'VEILS', 'VEINS', 'VEINY', 'VELAR', 'VELDS', 'VELDT', 'VELUM', 'VENAE', 'VENAL', 'VENDS', 'VENGE', 'VENIN', 'VENTS', 'VENUS', 'VERBS', 'VERSO', 'VERST', 'VERTS', 'VERTU', 'VESTA', 'VESTS', 'VETCH', 'VEXED', 'VEXER', 'VEXES', 'VEXIL', 'VIALS', 'VIAND', 'VIBES', 'VICAR', 'VICED', 'VICES', 'VICHY', 'VIERS', 'VIEWS', 'VIEWY', 'VIGAS', 'VIGIA', 'VIGIL', 'VILER', 'VILLI', 'VILLS', 'VIMEN', 'VINAL', 'VINAS', 'VINCA', 'VINED', 'VINES', 'VINIC', 'VINOS', 'VIOLS', 'VIPER', 'VIREO', 'VIRES', 'VIRGA', 'VIRID', 'VIRLS', 'VIRTU', 'VIRUS', 'VISAS', 'VISED', 'VISES', 'VISTA', 'VITAE', 'VITTA', 'VIVAS', 'VIZIR', 'VIZOR', 'VOCAB', 'VOCES', 'VODOU', 'VODUN', 'VOGIE', 'VOIDS', 'VOILE', 'VOLAR', 'VOLED', 'VOLES', 'VOLTA', 'VOLTE', 'VOLTI', 'VOLTS', 'VOLVA', 'VOMER', 'VOMIT', 'VOTED', 'VOTES', 'VOWED', 'VOWER', 'VOXEL', 'VROOM', 'VROUW', 'VROWS', 'VUGGS', 'VUGGY', 'VUGHS', 'VULGO']],
+  ['W', ['WACKE', 'WACKO', 'WACKS', 'WADDY', 'WADED', 'WADER', 'WADES', 'WADIS', 'WAFFS', 'WAFTS', 'WAGED', 'WAGER', 'WAGES', 'WAHOO', 'WAIFS', 'WAILS', 'WAINS', 'WAIRS', 'WAITS', 'WAIVE', 'WAKED', 'WAKEN', 'WAKER', 'WAKES', 'WALED', 'WALER', 'WALES', 'WALKS', 'WALLA', 'WALLS', 'WALLY', 'WAMES', 'WAMUS', 'WANDS', 'WANED', 'WANES', 'WANEY', 'WANKS', 'WANLY', 'WANTS', 'WARDS', 'WARED', 'WARES', 'WARKS', 'WARMS', 'WARNS', 'WARPS', 'WARTS', 'WARTY', 'WASHY', 'WASPS', 'WASPY', 'WASTS', 'WATAP', 'WATTS', 'WAUGH', 'WAUKS', 'WAULS', 'WAVED', 'WAVES', 'WAVEY', 'WAWLS', 'WAXED', 'WAXER', 'WAXES', 'WAZOO', 'WEALD', 'WEALS', 'WEANS', 'WEARS', 'WEBBY', 'WEBER', 'WECHT', 'WEDEL', 'WEDGY', 'WEEDS', 'WEEKS', 'WEENS', 'WEENY', 'WEEPS', 'WEEPY', 'WEEST', 'WEETS', 'WEFTS', 'WEIRS', 'WEKAS', 'WELCH', 'WELDS', 'WELLS', 'WELLY', 'WELSH', 'WELTS', 'WENCH', 'WENDS', 'WENNY', 'WESTS', 'WETLY', 'WHAMO', 'WHAMS', 'WHANG', 'WHAPS', 'WHARF', 'WHATS', 'WHAUP', 'WHEAL', 'WHEEN', 'WHEEP', 'WHELK', 'WHELM', 'WHENS', 'WHETS', 'WHEWS', 'WHEYS', 'WHIDS', 'WHIGS', 'WHIMS', 'WHINS', 'WHIPS', 'WHIPT', 'WHIRR', 'WHIRS', 'WHISH', 'WHIST', 'WHITS', 'WHITY', 'WHIZZ', 'WHOMP', 'WHOOF', 'WHOPS', 'WHORL', 'WHORT', 'WHOSO', 'WHUMP', 'WHUPS', 'WICCA', 'WICKS', 'WIDDY', 'WIDER', 'WIDES', 'WIDOW', 'WIFED', 'WIFES', 'WIFEY', 'WIFTY', 'WIGAN', 'WIGGY', 'WIGHT', 'WILCO', 'WILDS', 'WILED', 'WILES', 'WILLS', 'WILTS', 'WIMPS', 'WIMPY', 'WINCH', 'WINDS', 'WINED', 'WINES', 'WINEY', 'WINGS', 'WINGY', 'WINKS', 'WINOS', 'WINZE', 'WIPED', 'WIPER', 'WIPES', 'WIRED', 'WIRER', 'WIRES', 'WIRRA', 'WISED', 'WISES', 'WISHA', 'WISPS', 'WISPY', 'WISTS', 'WITAN', 'WITED', 'WITES', 'WITHE', 'WITHY', 'WIVED', 'WIVER', 'WIVES', 'WIZEN', 'WIZES', 'WOADS', 'WOALD', 'WODGE', 'WOFUL', 'WOLDS', 'WOLFS', 'WOMBS', 'WOMBY', 'WOMYN', 'WONKS', 'WONKY', 'WONTS', 'WOODS', 'WOODY', 'WOOED', 'WOOFS', 'WOOLS', 'WOOLY', 'WOOPS', 'WOOSH', 'WOOZY', 'WORDS', 'WORKS', 'WORMS', 'WORMY', 'WORTH', 'WORTS', 'WOWED', 'WRACK', 'WRANG', 'WRAPS', 'WRAPT', 'WRENS', 'WREST', 'WRICK', 'WRIED', 'WRIER', 'WRIES', 'WRING', 'WRITS', 'WROTH', 'WRYER', 'WRYLY', 'WURST', 'WUSHU', 'WUSSY', 'WYLED', 'WYLES', 'WYNDS', 'WYNNS', 'WYTED', 'WYTES']],
+  ['X', ['XEBEC', 'XENIA', 'XENIC', 'XENON', 'XERIC', 'XEROX', 'XERUS', 'XYLAN', 'XYLEM', 'XYLOL', 'XYLYL', 'XYSTI', 'XYSTS']],
+  ['Y', ['YABBY', 'YACKS', 'YAFFS', 'YAGER', 'YAGIS', 'YAHOO', 'YAIRD', 'YAMEN', 'YAMUN', 'YANGS', 'YANKS', 'YAPOK', 'YAPON', 'YARDS', 'YARER', 'YARNS', 'YAUDS', 'YAULD', 'YAUPS', 'YAWED', 'YAWEY', 'YAWLS', 'YAWNS', 'YAWPS', 'YCLAD', 'YEAHS', 'YEANS', 'YEARS', 'YECCH', 'YECHS', 'YECHY', 'YEGGS', 'YELKS', 'YELLS', 'YELPS', 'YENTA', 'YENTE', 'YERBA', 'YERKS', 'YESES', 'YETIS', 'YETTS', 'YEUKS', 'YEUKY', 'YIKES', 'YILLS', 'YINCE', 'YIPES', 'YIRDS', 'YIRRS', 'YIRTH', 'YLEMS', 'YOBBO', 'YOCKS', 'YODEL', 'YODHS', 'YODLE', 'YOGAS', 'YOGEE', 'YOGHS', 'YOGIC', 'YOGIN', 'YOGIS', 'YOKED', 'YOKEL', 'YOKES', 'YOLKS', 'YOLKY', 'YOMIM', 'YONIC', 'YONIS', 'YORES', 'YOURN', 'YOURS', 'YOUSE', 'YOWED', 'YOWES', 'YOWIE', 'YOWLS', 'YOYOS', 'YUANS', 'YUCAS', 'YUCCA', 'YUCCH', 'YUCKS', 'YUCKY', 'YUGAS', 'YUKKY', 'YULAN', 'YULES', 'YUMMY', 'YUPON', 'YUPPY', 'YURTA', 'YURTS']],
+  ['Z', ['ZAIRE', 'ZAMIA', 'ZANZA', 'ZAPPY', 'ZARFS', 'ZAXES', 'ZAYIN', 'ZAZEN', 'ZEALS', 'ZEBEC', 'ZEBUS', 'ZEINS', 'ZERKS', 'ZEROS', 'ZESTS', 'ZETAS', 'ZIBET', 'ZILCH', 'ZILLS', 'ZINCS', 'ZINCY', 'ZINEB', 'ZINES', 'ZINGS', 'ZINGY', 'ZINKY', 'ZIPPY', 'ZIRAM', 'ZITIS', 'ZIZIT', 'ZLOTE', 'ZLOTY', 'ZOEAE', 'ZOEAL', 'ZOEAS', 'ZOMBI', 'ZONAE', 'ZONAL', 'ZONED', 'ZONER', 'ZONES', 'ZONKS', 'ZOOEY', 'ZOOID', 'ZOOKS', 'ZOOMS', 'ZOONS', 'ZOOTY', 'ZORIL', 'ZORIS', 'ZOUKS', 'ZOWIE', 'ZUZIM', 'ZYMES']]
+]);
+
+  const KEYBOARD_ROWS = [
+  ['q','w','e','r','t','y','u','i','o','p'],
+  ['a','s','d','f','g','h','j','k','l'],
+  ['Enter','z','x','c','v','b','n','m','⌫']
+];
+
+let secret, grid, currentRow, currentCol, gameOver, keyColors;
+
+function init() {
+  secret = WORDS[Math.floor(Math.random() * WORDS.length)];
+  grid = Array.from({length: 6}, () => Array(5).fill(''));
+  currentRow = 0; currentCol = 0; gameOver = false;
+  keyColors = {};
+  document.getElementById('msg').textContent = '';
+  renderBoard();
+  renderKeyboard();
+}
+
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  for (let r = 0; r < 6; r++) {
+    const row = document.createElement('div');
+    row.className = 'blurdle-row';
+    row.id = 'row-' + r;
+    for (let c = 0; c < 5; c++) {
+      const tile = document.createElement('div');
+      tile.className = 'blurdle-tile';
+      tile.id = `tile-${r}-${c}`;
+      tile.textContent = grid[r][c];
+      if (grid[r][c]) tile.classList.add('filled');
+      row.appendChild(tile);
+    }
+    board.appendChild(row);
+  }
+}
+
+function renderKeyboard() {
+  const kb = document.getElementById('keyboard');
+  kb.innerHTML = '';
+  KEYBOARD_ROWS.forEach(keys => {
+    const row = document.createElement('div');
+    row.className = 'keyboard-row';
+    keys.forEach(k => {
+      const btn = document.createElement('button');
+      btn.className = 'key' + (k.length > 1 ? ' wide' : '');
+      btn.textContent = k;
+      btn.dataset.key = k;
+      if (keyColors[k.toLowerCase()]) btn.classList.add(keyColors[k.toLowerCase()]);
+      btn.addEventListener('click', () => handleKey(k));
+      row.appendChild(btn);
+    });
+    kb.appendChild(row);
+  });
+}
+
+function updateTile(r, c, letter) {
+  const tile = document.getElementById(`tile-${r}-${c}`);
+  tile.textContent = letter.toUpperCase();
+  tile.classList.toggle('filled', !!letter);
+}
+
+function handleKey(key) {
+  if (gameOver) return;
+  if (key === '⌫' || key === 'Backspace') {
+    
+    if (currentCol > 0) {
+      console.log('Backspacing ' + grid[currentRow][currentCol-1]);
+      currentCol--;
+      grid[currentRow][currentCol] = '';
+      updateTile(currentRow, currentCol, '');
+    }
+    return;
+  }
+  if (key === 'Enter') {
+    submitGuess();
+    return;
+  }
+  if (/^[a-zA-Z]$/.test(key) && currentCol < 5) {
+    grid[currentRow][currentCol] = key.toLowerCase();
+    updateTile(currentRow, currentCol, key);
+    currentCol++;
+  }
+}
+
+function isValidWord(word) {
+  return (WORDS.includes(word)) || (allWordMap.get(word[0]).includes(word));
+}
+
+function submitGuess() {
+  if (currentCol < 5) {
+    shakeRow(currentRow);
+    showMsg('Not enough letters');
+    return;
+  }
+  let guess = grid[currentRow].join('').toUpperCase();
+
+  if(!isValidWord(guess)){
+    shakeRow(currentRow);
+    showMsg('Not a valid English word');
+    return;
+  }
+  // check valid word here
+
+  let result = scoreGuess(guess);
+  if (result.every(r => r === 'correct')) {
+    gameOver = true;
+    const msgs = ['Genius!','Magnificent!','Impressive!','Splendid!','Great!','Phew!'];
+    showMsg(msgs[currentRow] || 'Nice!');
+    bounceRow(currentRow);
+  } else {
+    flipRow(currentRow, () => { })
+    currentRow++;
+    currentCol = 0;
+    if (currentRow >= 6) {
+      gameOver = true;
+      showMsg(secret.toUpperCase());
+    }
+  }
+  if(gameOver){
+    for(let i = 0; i < 6 && i <= currentRow; i++){
+      guess = grid[i].join('').toUpperCase();
+      result = scoreGuess(guess);
+      revealRow(i, result, guess , () => { });
+    }
+    showNewGame();
+  }
+
+}
+
+function scoreGuess(guess) {
+  const result = Array(5).fill('absent');
+  const secretArr = secret.split('');
+  const guessArr = guess.split('');
+  const used = Array(5).fill(false);
+  for (let i = 0; i < 5; i++) {
+    if (guessArr[i] === secretArr[i]) { result[i] = 'correct'; used[i] = true; }
+  }
+  for (let i = 0; i < 5; i++) {
+    if (result[i] === 'correct') continue;
+    for (let j = 0; j < 5; j++) {
+      if (!used[j] && guessArr[i] === secretArr[j]) { result[i] = 'present'; used[j] = true; break; }
+    }
+  }
+  return result;
+}
+
+function revealRow(r, result, guess, cb) {
+  const PRIORITY = { correct: 3, present: 2, absent: 1 };
+  result.forEach((state, c) => {
+    const tile = document.getElementById(`tile-${r}-${c}`);
+    setTimeout(() => {
+      tile.classList.add('reveal');
+      setTimeout(() => {
+        tile.classList.add(state);
+        const letter = guess[c];
+        const cur = keyColors[letter];
+        if (!cur || PRIORITY[state] > PRIORITY[cur]) keyColors[letter] = state;
+        const keyBtn = document.querySelector(`[data-key="${letter}"]`);
+        if (keyBtn) {
+          keyBtn.className = 'key';
+          keyBtn.classList.add(keyColors[letter]);
+        }
+      }, 250);
+    }, c * 120);
+  });
+  setTimeout(cb, 5 * 120 + 400);
+}
+function flipRow(r, cb) {
+  ['','','','',''].forEach((state, c) => {
+    const tile = document.getElementById(`tile-${r}-${c}`);
+    setTimeout(() => {
+      tile.classList.add('reveal');
+      setTimeout(() => {  }, 250);
+    }, c * 120);
+  });
+  setTimeout(cb, 5 * 120 + 400);
+}
+
+function shakeRow(r) {
+  const row = document.getElementById('row-' + r);
+  row.querySelectorAll('.blurdle-tile').forEach(t => {
+    t.classList.remove('shake');
+    void t.offsetWidth;
+    t.classList.add('shake');
+  });
+}
+
+function bounceRow(r) {
+  const row = document.getElementById('row-' + r);
+  row.querySelectorAll('.blurdle-tile').forEach((t, i) => {
+    setTimeout(() => { t.classList.add('bounce'); }, i * 80);
+  });
+}
+
+function showMsg(text) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  if (!gameOver) setTimeout(() => { if (el.textContent === text) el.textContent = ''; }, 1500);
+}
+
+function showNewGame() {
+  setTimeout(() => {
+    const kb = document.getElementById('keyboard');
+    const btn = document.createElement('button');
+    btn.className = 'new-game-btn';
+    btn.textContent = 'New Game';
+    btn.onclick = init;
+    kb.after(btn);
+  }, 1600);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === 'Enter') handleKey('Enter');
+  else if (e.key === 'Backspace') handleKey('Backspace');
+  else if (/^[a-zA-Z]$/.test(e.key)) handleKey(e.key);
+});
+
+init();
+</script>
+</body>
